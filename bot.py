@@ -55,13 +55,12 @@ def price(bot, update):
         bid = float(body[start + len(token) : end])
 
         xem = float(json.loads(requests.get('https://api.coinmarketcap.com/v1/ticker/nem/').text)[0]["price_usd"])
-
-        #update.message.reply_text("ASK: {:.4f} BID: {:.4f}".format(ask, bid))
-        update.message.reply_text("1 CVZ = {:.4f} XEM = ${:.5f}".format(bid, bid * xem))
-
         
         timer = ctime
     #endif
+        
+    #update.message.reply_text("ASK: {:.4f} BID: {:.4f}".format(ask, bid))
+    update.message.reply_text("1 CVZ = {:.4f} XEM = ${:.5f}".format(bid, bid * xem))
 
 def help(bot, update):
     """Send a message when the command /help is issued."""
