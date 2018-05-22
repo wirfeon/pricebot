@@ -34,7 +34,7 @@ logger = logging.getLogger(__name__)
 # update. Error handlers also receive the raised TelegramError object in error.
 def price(bot, update):
     coin = "coinvest:vezcoin"
-    body = requests.get("https://nemchange.com/Exchange/market/" + coin + "/nem:xem")
+    body = requests.get("https://nemchange.com/Exchange/market/" + coin + "/nem:xem").text
     token = '<td id = "ratio2_0">'
     start = body.find(token)
     end = body.find("</td>", start)
