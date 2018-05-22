@@ -40,7 +40,7 @@ def pricecvz(bot, update):
   
     ctime = datetime.now().timestamp()
 
-    if (ctime > timer + 10):
+    if ((ctime > timer + 10) or (ask == -1) or (bid == -1) or (xem == -1)):
         coin = "coinvest:vezcoin"
         body = requests.get("https://nemchange.com/Exchange/market/" + coin + "/nem:xem").text
 
