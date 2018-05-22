@@ -35,11 +35,18 @@ logger = logging.getLogger(__name__)
 def price(bot, update):
     coin = "coinvest:vezcoin"
     body = requests.get("https://nemchange.com/Exchange/market/" + coin + "/nem:xem").text
+
     token = '<td id = "ratio2_0">'
     start = body.find(token)
     end = body.find("</td>", start)
     ask = float(body[start + len(token) : end])
-    update.message.reply_text("ASK: {:.2f}".format(ask))
+
+    token = '<td id = "ratio_0">'
+    start = body.find(token, end)
+    end = body.find("</td>", start)
+    bid = float(body[start + len(token) : end])
+
+    update.message.reply_text("ASK: {:.4f} BID: {:.4f}".format(ask, bid))
 
 
 def help(bot, update):
