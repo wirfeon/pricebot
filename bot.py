@@ -30,28 +30,38 @@ logging.basicConfig(format='%(asctime)s - %(name)s - %(levelname)s - %(message)s
 
 logger = logging.getLogger(__name__)
 
+timer = 0
+ask = bid = xem = -1
 
 # Define a few command handlers. These usually take the two arguments bot and
 # update. Error handlers also receive the raised TelegramError object in error.
 def price(bot, update):
-    coin = "coinvest:vezcoin"
-    body = requests.get("https://nemchange.com/Exchange/market/" + coin + "/nem:xem").text
+    global timer, ask, bid, xem
+  
+    ctime = datetime.now().timestamp()
 
-    token = '<td id = "ratio2_0">'
-    start = body.find(token)
-    end = body.find("</td>", start)
-    ask = float(body[start + len(token) : end])
+    if (ctime > timer + 10):
+        coin = "coinvest:vezcoin"
+        body = requests.get("https://nemchange.com/Exchange/market/" + coin + "/nem:xem").text
 
-    token = '<td id = "ratio_0">'
-    start = body.find(token, end)
-    end = body.find("</td>", start)
-    bid = float(body[start + len(token) : end])
+        token = '<td id = "ratio2_0">'
+        start = body.find(token)
+        end = body.find("</td>", start)
+        ask = float(body[start + len(token) : end])
 
-    xem = float(json.loads(requests.get('https://api.coinmarketcap.com/v1/ticker/nem/').text)[0]["price_usd"])
+        token = '<td id = "ratio_0">'
+        start = body.find(token, end)
+        end = body.find("</td>", start)
+        bid = float(body[start + len(token) : end])
 
-    #update.message.reply_text("ASK: {:.4f} BID: {:.4f}".format(ask, bid))
-    update.message.reply_text("1 CVZ = {:.4f} XEM = ${:.5f}".format(bid, bid * xem))
+        xem = float(json.loads(requests.get('https://api.coinmarketcap.com/v1/ticker/nem/').text)[0]["price_usd"])
 
+        #update.message.reply_text("ASK: {:.4f} BID: {:.4f}".format(ask, bid))
+        update.message.reply_text("1 CVZ = {:.4f} XEM = ${:.5f}".format(bid, bid * xem))
+
+        
+        timer = ctime
+    #endif
 
 def help(bot, update):
     """Send a message when the command /help is issued."""
