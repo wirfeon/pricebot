@@ -1,0 +1,10 @@
+{
+  "name": "Telegram pricebot",
+  "description": "Telegram pricebot",
+  "image": "heroku/python",
+  "repository": "https://git.heroku.com/shielded-peak-77662.git",
+  "keywords": ["python"],
+  "addons": [],
+  "env": {
+  }
+}
