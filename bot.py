@@ -21,7 +21,8 @@ import os
 from telegram.ext import Updater, CommandHandler, MessageHandler, Filters
 from datetime import datetime
 
-TOKEN = "554022144:AAFDYJkAZSH6flnmPujbJ1nmtnaJ7DPMTZA"
+#TOKEN = "554022144:AAFDYJkAZSH6flnmPujbJ1nmtnaJ7DPMTZA"
+TOKEN = "603298832:AAGLTud_E45rzm8rtx9eneodOOJJJqxzVsM"
 PORT = int(os.environ.get('PORT', '8443'))
 
 # Enable logging
@@ -34,7 +35,7 @@ ask = bid = xem = -1
 
 # Define a few command handlers. These usually take the two arguments bot and
 # update. Error handlers also receive the raised TelegramError object in error.
-def pricecvz(bot, update):
+def price(bot, update):
     global timer, ask, bid, xem
     coin = "coinvest:vezcoin"
   
@@ -73,13 +74,14 @@ def main():
     updater = Updater(TOKEN, workers = 1)
 
     updater.start_webhook(listen="0.0.0.0", port=PORT, url_path=TOKEN)
-    updater.bot.set_webhook("https://shielded-peak-77662.herokuapp.com/" + TOKEN)
+#    updater.bot.set_webhook("https://shielded-peak-77662.herokuapp.com/" + TOKEN)
+    updater.bot.set_webhook("https://pacific-chamber-20771.herokuapp.com/" + TOKEN)
 
     # Get the dispatcher to register handlers
     dp = updater.dispatcher
 
     # on different commands - answer in Telegram
-    dp.add_handler(CommandHandler("pricecvz", pricecvz))
+    dp.add_handler(CommandHandler("price", price))
 
     # log all errors
     dp.add_error_handler(error)
