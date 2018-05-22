@@ -33,13 +33,13 @@ logger = logging.getLogger(__name__)
 # Define a few command handlers. These usually take the two arguments bot and
 # update. Error handlers also receive the raised TelegramError object in error.
 def price(bot, update):
-	coin = "coinvest:vezcoin"
-	body = requests.get("https://nemchange.com/Exchange/market/" + coin + "/nem:xem")
+    coin = "coinvest:vezcoin"
+    body = requests.get("https://nemchange.com/Exchange/market/" + coin + "/nem:xem")
     token = '<td id = "ratio2_0">'
-	start = body.find(token)
-	end = body.find("</td>", start)
-	ask = float(body[start + len(token) : end])
-	update.message.reply_text("ASK: " + ask)
+    start = body.find(token)
+    end = body.find("</td>", start)
+    ask = float(body[start + len(token) : end])
+    update.message.reply_text("ASK: " + ask)
 
 
 def help(bot, update):
