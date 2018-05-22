@@ -39,7 +39,7 @@ def price(bot, update):
     start = body.find(token)
     end = body.find("</td>", start)
     ask = float(body[start + len(token) : end])
-    update.message.reply_text("ASK: " + ask)
+    update.message.reply_text("ASK: {:.2f}".format(ask))
 
 
 def help(bot, update):
