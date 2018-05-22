@@ -58,12 +58,10 @@ def main():
     # Post version 12 this will no longer be necessary
     updater = Updater(TOKEN, workers = 1)
 
-	updater.start_webhook(listen="0.0.0.0",
-                      port=PORT,
-                      url_path=TOKEN)
-	updater.bot.set_webhook("https://shielded-peak-77662.herokuapp.com/" + TOKEN)
+    updater.start_webhook(listen="0.0.0.0", port=PORT, url_path=TOKEN)
+    updater.bot.set_webhook("https://shielded-peak-77662.herokuapp.com/" + TOKEN)
     
-	# Get the dispatcher to register handlers
+    # Get the dispatcher to register handlers
     dp = updater.dispatcher
 
     # on different commands - answer in Telegram
