@@ -3,6 +3,7 @@ url = "https://pypi.python.org/simple"
 verify_ssl = true
 
 [packages]
+python-telegram-bot = "*"
 
 [requires]
 python_version = "3.5.2"
