@@ -15,6 +15,7 @@ bot.
 
 import logging
 import requests
+import json
 
 from telegram.ext import Updater, CommandHandler, MessageHandler, Filters
 
@@ -46,7 +47,10 @@ def price(bot, update):
     end = body.find("</td>", start)
     bid = float(body[start + len(token) : end])
 
-    update.message.reply_text("ASK: {:.4f} BID: {:.4f}".format(ask, bid))
+    xem = float(json.loads(requests.get('https://api.coinmarketcap.com/v1/ticker/nem/').text)[0]["price_usd"])
+
+    #update.message.reply_text("ASK: {:.4f} BID: {:.4f}".format(ask, bid))
+    update.message.reply_text("1 CVZ = {:.4f} XEM = ${:.5f}".format(bid, bid * xem))
 
 
 def help(bot, update):
