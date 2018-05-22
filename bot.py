@@ -36,11 +36,13 @@ ask = bid = xem = -1
 # update. Error handlers also receive the raised TelegramError object in error.
 def pricecvz(bot, update):
     global timer, ask, bid, xem
+    coin = "coinvest:vezcoin"
   
     ctime = datetime.now().timestamp()
 
     if ((ctime > timer + 10) or (ask == -1) or (bid == -1) or (xem == -1)):
-        coin = "coinvest:vezcoin"
+        logger.info("Pulling data on '{:s}'".format(coin))
+ 
         body = requests.get("https://nemchange.com/Exchange/market/" + coin + "/nem:xem").text
 
         token = '<td id = "ratio2_0">'
@@ -60,6 +62,10 @@ def pricecvz(bot, update):
         
     #update.message.reply_text("ASK: {:.4f} BID: {:.4f}".format(ask, bid))
     update.message.reply_text("1 CVZ = {:.4f} XEM = ${:.5f}".format(bid, bid * xem))
+
+def error(bot, update, error):
+    """Log Errors caused by Updates."""
+    logger.warning('Update "%s" caused error "%s"', update, error)
 
 def main():
     """Start the bot."""
