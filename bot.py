@@ -35,7 +35,7 @@ ask = bid = xem = -1
 
 # Define a few command handlers. These usually take the two arguments bot and
 # update. Error handlers also receive the raised TelegramError object in error.
-def price(bot, update):
+def pricecvz(bot, update):
     global timer, ask, bid, xem
   
     ctime = datetime.now().timestamp()
@@ -62,21 +62,6 @@ def price(bot, update):
     #update.message.reply_text("ASK: {:.4f} BID: {:.4f}".format(ask, bid))
     update.message.reply_text("1 CVZ = {:.4f} XEM = ${:.5f}".format(bid, bid * xem))
 
-def help(bot, update):
-    """Send a message when the command /help is issued."""
-    update.message.reply_text('Help!')
-
-
-def echo(bot, update):
-    """Echo the user message."""
-    update.message.reply_text(update.message.text)
-
-
-def error(bot, update, error):
-    """Log Errors caused by Updates."""
-    logger.warning('Update "%s" caused error "%s"', update, error)
-
-
 def main():
     """Start the bot."""
     # Create the EventHandler and pass it your bot's token.
@@ -89,8 +74,7 @@ def main():
     dp = updater.dispatcher
 
     # on different commands - answer in Telegram
-    dp.add_handler(CommandHandler("price", price))
-    dp.add_handler(CommandHandler("help", help))
+    dp.add_handler(CommandHandler("pricecvz", pricecvz))
 
     # on noncommand i.e message - echo the message on Telegram
     dp.add_handler(MessageHandler(Filters.text, echo))
