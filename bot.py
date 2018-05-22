@@ -17,6 +17,11 @@ import logging
 
 from telegram.ext import Updater, CommandHandler, MessageHandler, Filters
 
+import os
+
+TOKEN = "554022144:AAFDYJkAZSH6flnmPujbJ1nmtnaJ7DPMTZA"
+PORT = int(os.environ.get('PORT', '8443'))
+
 # Enable logging
 logging.basicConfig(format='%(asctime)s - %(name)s - %(levelname)s - %(message)s',
                     level=logging.INFO)
@@ -51,9 +56,14 @@ def main():
     # Create the Updater and pass it your bot's token.
     # Make sure to set use_context=True to use the new context based callbacks
     # Post version 12 this will no longer be necessary
-    updater = Updater("554022144:AAFDYJkAZSH6flnmPujbJ1nmtnaJ7DPMTZA", None, 1, None, None, None)
+    updater = Updater(TOKEN, workers = 1)
 
-    # Get the dispatcher to register handlers
+	updater.start_webhook(listen="0.0.0.0",
+                      port=PORT,
+                      url_path=TOKEN)
+	updater.bot.set_webhook("https://shielded-peak-77662.herokuapp.com/" + TOKEN)
+    
+	# Get the dispatcher to register handlers
     dp = updater.dispatcher
 
     # on different commands - answer in Telegram
