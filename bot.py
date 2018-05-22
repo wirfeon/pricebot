@@ -56,7 +56,7 @@ def main():
     # Create the Updater and pass it your bot's token.
     # Make sure to set use_context=True to use the new context based callbacks
     # Post version 12 this will no longer be necessary
-    updater = Updater(TOKEN, workers = 1)
+    updater = Updater(TOKEN, workers=1, use_context=True)
 
     updater.start_webhook(listen="0.0.0.0", port=PORT, url_path=TOKEN)
     updater.bot.set_webhook("https://shielded-peak-77662.herokuapp.com/" + TOKEN)
