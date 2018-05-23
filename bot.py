@@ -63,7 +63,7 @@ def price(bot, update):
     #endif
         
     #update.message.reply_text("ASK: {:.4f} BID: {:.4f}".format(ask, bid))
-    update.message.reply_text("1 CVZ = {:.4f} XEM = ${:.5f}".format(bid, bid * xem))
+    update.message.chat.send_message("1 CVZ = {:.4f} XEM = ${:.5f}".format(bid, bid * xem))
 
 def error(bot, update, error):
     """Log Errors caused by Updates."""
