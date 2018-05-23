@@ -43,8 +43,10 @@ def price(bot, update):
 
     if (chat_title == "Test"):
         coin = "xarcade:xar"
+        coin_ticker = "XAR"
     elif (chat_title == "myCoinvest"):
         coin = "coinvest:vezcoin"
+        coin_ticker = "CVZ"
     else: 
         return;
     #endif
@@ -73,7 +75,7 @@ def price(bot, update):
         
     logger.info("%d '%s'" % (update.message.chat.id, update.message.chat.title))
     #update.message.reply_text("ASK: {:.4f} BID: {:.4f}".format(ask, bid))
-    update.message.chat.send_message("1 CVZ = {:.4f} XEM = ${:.5f}".format(bid, bid * xem))
+    update.message.chat.send_message("1 {:s} = {:.4f} XEM = ${:.5f}".format(coin_ticker, bid, bid * xem))
 
 def error(bot, update, error):
     """Log Errors caused by Updates."""
