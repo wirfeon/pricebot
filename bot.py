@@ -31,32 +31,32 @@ logging.basicConfig(format='%(asctime)s - %(name)s - %(levelname)s - %(message)s
 
 logger = logging.getLogger(__name__)
 
-timer = 0
-ask = bid = xem = -1
+template = { "ask": -1, "bid": -1, "xem": -1, "timer": 0 }
+db = { "XAR": template, "CVZ": template }
+db["XAR"]["name"] = "xarcade:xar"
+db["CVZ"]["name"] = "coinvest:vezcoin"
 
 # Define a few command handlers. These usually take the two arguments bot and
 # update. Error handlers also receive the raised TelegramError object in error.
 def price(bot, update):
-    global timer, ask, bid, xem
 
     chat_title = update.message.chat.title
 
     if (chat_title == "Test"):
-        coin = "xarcade:xar"
         coin_ticker = "XAR"
     elif (chat_title == "myCoinvest"):
-        coin = "coinvest:vezcoin"
         coin_ticker = "CVZ"
     else: 
         return;
     #endif
 
+    coin = db[coin_ticker]
     ctime = datetime.now().timestamp()
 
-    if ((ctime > timer + 10) or (ask == -1) or (bid == -1) or (xem == -1)):
-        logger.info("Pulling data on '{:s}'".format(coin))
+    if ((ctime > coin["timer"] + 10) or (coin["ask"] == -1) or (coin["bid"] == -1) or (coin["xem"] == -1)):
+        logger.info("Pulling data on '{:s}'".format(coin["name"]))
  
-        body = requests.get("https://nemchange.com/Exchange/market/" + coin + "/nem:xem").text
+        body = requests.get("https://nemchange.com/Exchange/market/" + coin["name"] + "/nem:xem").text
 
         token = '<td id = "ratio2_0">'
         start = body.find(token)
@@ -75,7 +75,7 @@ def price(bot, update):
         
     logger.info("%d '%s'" % (update.message.chat.id, update.message.chat.title))
     #update.message.reply_text("ASK: {:.4f} BID: {:.4f}".format(ask, bid))
-    update.message.chat.send_message("1 {:s} = {:.4f} XEM = ${:.5f}".format(coin_ticker, bid, bid * xem))
+    update.message.chat.send_message("1 {:s} = {:.4f} XEM = ${:.5f}".format(coin_ticker, coin["bid"], coin["bid"] * coin["xem"]))
 
 def error(bot, update, error):
     """Log Errors caused by Updates."""
