@@ -73,7 +73,7 @@ def price(bot, update):
         coin["timer"] = ctime
     #endif
         
-    logger.info("%d '%s'" % (update.message.chat.id, update.message.chat.title))
+    logger.info("%u '%s'" % (update.message.chat.id, update.message.chat.title))
     #update.message.reply_text("ASK: {:.4f} BID: {:.4f}".format(ask, bid))
     update.message.chat.send_message("1 {:s} = {:.4f} XEM = ${:.5f}".format(coin_ticker, coin["bid"], coin["bid"] * coin["xem"]))
 
