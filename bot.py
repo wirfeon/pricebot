@@ -9,7 +9,7 @@ import os
 from telegram.ext import Updater, CommandHandler, MessageHandler, Filters
 from datetime import datetime
 
-ENV = "test"
+ENV = "master"
 
 params = {
     "master": {
