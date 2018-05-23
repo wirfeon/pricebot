@@ -62,7 +62,7 @@ def price(bot, update):
         timer = ctime
     #endif
         
-    logger.info("%d '%s'" % (update.message.chat.id, update.message.chat.invite_link))
+    logger.info("%d '%s'" % (update.message.chat.id, update.message.chat.title))
     #update.message.reply_text("ASK: {:.4f} BID: {:.4f}".format(ask, bid))
     update.message.chat.send_message("1 CVZ = {:.4f} XEM = ${:.5f}".format(bid, bid * xem))
 
