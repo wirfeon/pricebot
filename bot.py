@@ -1,18 +1,6 @@
 #!/usr/bin/env python
 # -*- coding: utf-8 -*-
 
-"""Simple Bot to reply to Telegram messages.
-This program is dedicated to the public domain under the CC0 license.
-This Bot uses the Updater class to handle the bot.
-First, a few handler functions are defined. Then, those functions are passed to
-the Dispatcher and registered at their respective places.
-Then, the bot is started and runs until we press Ctrl-C on the command line.
-Usage:
-Basic Echobot example, repeats messages.
-Press Ctrl-C on the command line or send a signal to the process to stop the
-bot.
-"""
-
 import logging
 import requests
 import json
@@ -21,8 +9,21 @@ import os
 from telegram.ext import Updater, CommandHandler, MessageHandler, Filters
 from datetime import datetime
 
-#TOKEN = "554022144:AAFDYJkAZSH6flnmPujbJ1nmtnaJ7DPMTZA"
-TOKEN = "603298832:AAGLTud_E45rzm8rtx9eneodOOJJJqxzVsM"
+ENV = "test"
+
+params = {
+    "master": {
+        "token": "554022144:AAFDYJkAZSH6flnmPujbJ1nmtnaJ7DPMTZA",
+        "webhook": "https://shielded-peak-77662.herokuapp.com/"
+    },
+    "test": {
+        "token": "603298832:AAGLTud_E45rzm8rtx9eneodOOJJJqxzVsM",
+        "webhook": "https://pacific-chamber-20771.herokuapp.com/"
+    }
+}    
+
+env = params[ENV]
+
 PORT = int(os.environ.get('PORT', '8443'))
 
 # Enable logging
@@ -73,9 +74,8 @@ def main():
     # Create the EventHandler and pass it your bot's token.
     updater = Updater(TOKEN, workers = 1)
 
-    updater.start_webhook(listen="0.0.0.0", port=PORT, url_path=TOKEN)
-#    updater.bot.set_webhook("https://shielded-peak-77662.herokuapp.com/" + TOKEN)
-    updater.bot.set_webhook("https://pacific-chamber-20771.herokuapp.com/" + TOKEN)
+    updater.start_webhook(listen="0.0.0.0", port=PORT, url_path=env["token"])
+    updater.bot.set_webhook(env["webhook"] + env["token"])
 
     # Get the dispatcher to register handlers
     dp = updater.dispatcher
