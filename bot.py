@@ -70,7 +70,7 @@ def price(bot, update):
 
         xem = float(json.loads(requests.get('https://api.coinmarketcap.com/v1/ticker/nem/').text)[0]["price_usd"])
         
-        timer = ctime
+        coin["timer"] = ctime
     #endif
         
     logger.info("%d '%s'" % (update.message.chat.id, update.message.chat.title))
