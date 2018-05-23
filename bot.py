@@ -38,8 +38,17 @@ ask = bid = xem = -1
 # update. Error handlers also receive the raised TelegramError object in error.
 def price(bot, update):
     global timer, ask, bid, xem
-    coin = "coinvest:vezcoin"
-  
+
+    chat_title = update.message.chat.title
+
+    if (chat_title == "Test"):
+        coin = "xarcade:xar"
+    elif (chat_title == "myCoinvest"):
+        coin = "coinvest:vezcoin"
+    else: 
+        return;
+    #endif
+
     ctime = datetime.now().timestamp()
 
     if ((ctime > timer + 10) or (ask == -1) or (bid == -1) or (xem == -1)):
