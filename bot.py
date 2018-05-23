@@ -72,7 +72,7 @@ def error(bot, update, error):
 def main():
     """Start the bot."""
     # Create the EventHandler and pass it your bot's token.
-    updater = Updater(TOKEN, workers = 1)
+    updater = Updater(env["token"], workers = 1)
 
     updater.start_webhook(listen="0.0.0.0", port=PORT, url_path=env["token"])
     updater.bot.set_webhook(env["webhook"] + env["token"])
