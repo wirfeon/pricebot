@@ -43,7 +43,12 @@ def price(bot, update):
     if ((ctime > coin["timer"] + 10) or (coin["ask"] == -1) or (coin["bid"] == -1) or (coin["xem"] == -1)):
         logger.info("Pulling data on '{:s}'".format(coin["name"]))
  
-        body = requests.get("https://nemchange.com/Exchange/market/" + coin["name"] + "/nem:xem").text
+        #body = requests.get("https://nemchange.com/Exchange/market/" + coin["name"] + "/nem:xem").text
+        body = requests.get("https://nemchange.com//Exchange/actualOrders2/nem:xem/" + coin["name"]).text
+        if (body == "{}"):
+            update.message.chat.send_message("Coming soon...")
+            return
+        #endif
 
         token = '<td id = "ratio2_0">'
         start = body.find(token)
