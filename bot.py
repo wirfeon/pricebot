@@ -25,6 +25,8 @@ db["XPX"]["name"] = "prx:xpx"
 # Define a few command handlers. These usually take the two arguments bot and
 # update. Error handlers also receive the raised TelegramError object in error.
 def priceall(bot, update):
+    chat_title = update.message.chat.title
+    
     if (chat_title == "Test"):
         update.message.chat.title = "myCoinvest"
         price(bot, update)
