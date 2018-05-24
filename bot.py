@@ -49,7 +49,6 @@ def price(bot, update):
     #endif
 
     coin = db[coin_ticker]
-    logger.info("%s %s" % (coin_ticker, coin["name"]))
     ctime = datetime.now().timestamp()
 
     if ((ctime > coin["timer"] + 10) or (coin["bid"] == -1) or (coin["xem"] == -1)):
@@ -66,11 +65,6 @@ def price(bot, update):
         start = body.text.find(token)
         end = body.text.find("</td>", start)
         ratio = float(body.text[start + len(token) : end])
-
-        #token = "<td id='to2_0'>"
-        #start = body.text.find(token)
-        #end = body.text.find("</td>", start)
-        #amount = float(body.text[start + len(token) : end])
 
         coin["bid"] = 1 / ratio
         coin["xem"] = float(json.loads(requests.get('https://api.coinmarketcap.com/v1/ticker/nem/').text)[0]["price_usd"])
