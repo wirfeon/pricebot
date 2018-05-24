@@ -5,7 +5,7 @@ import logging
 import requests
 import json
 import os
-
+from copy import copy
 from telegram.ext import Updater, CommandHandler, MessageHandler, Filters
 from datetime import datetime
 
@@ -17,7 +17,7 @@ logging.basicConfig(format='%(asctime)s - %(name)s - %(levelname)s - %(message)s
 logger = logging.getLogger(__name__)
 
 template = { "ask": -1, "bid": -1, "xem": -1, "timer": 0 }
-db = { "XAR": template, "CVZ": template, "XPX": template}
+db = { "XAR": copy(template), "CVZ": copy(template), "XPX": copy(template)}
 db["XAR"]["name"] = "xarcade:xar"
 db["CVZ"]["name"] = "coinvest:vezcoin"
 db["XPX"]["name"] = "prx:xpx"
@@ -49,7 +49,7 @@ def price(bot, update):
     #endif
 
     coin = db[coin_ticker]
-    logger.info("%s %s" % (coin_ticker, coin))
+    logger.info("%s %s" % (coin_ticker, coin["name"]))
     ctime = datetime.now().timestamp()
 
     if ((ctime > coin["timer"] + 10) or (coin["ask"] == -1) or (coin["bid"] == -1) or (coin["xem"] == -1)):
