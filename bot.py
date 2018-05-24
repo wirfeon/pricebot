@@ -62,12 +62,12 @@ def price(bot, update):
             return
         #endif
 
-        token = '<td id = "ratio2_0">'
+        token = "<td id = 'ratio2_0'>"
         start = body.find(token)
         end = body.find("</td>", start)
         coin["ask"] = float(body[start + len(token) : end])
 
-        token = '<td id = "ratio_0">'
+        token = "<td id = 'ratio_0'>"
         start = body.find(token, end)
         end = body.find("</td>", start)
         coin["bid"] = float(body[start + len(token) : end])
