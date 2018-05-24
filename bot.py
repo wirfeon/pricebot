@@ -9,21 +9,6 @@ import os
 from telegram.ext import Updater, CommandHandler, MessageHandler, Filters
 from datetime import datetime
 
-ENV = "test"
-
-params = {
-    "master": {
-        "token": "554022144:AAFDYJkAZSH6flnmPujbJ1nmtnaJ7DPMTZA",
-        "webhook": "https://shielded-peak-77662.herokuapp.com/"
-    },
-    "test": {
-        "token": "603298832:AAGLTud_E45rzm8rtx9eneodOOJJJqxzVsM",
-        "webhook": "https://pacific-chamber-20771.herokuapp.com/"
-    }
-}    
-
-env = params[ENV]
-
 PORT = int(os.environ.get('PORT', '8443'))
 
 # Enable logging
@@ -84,10 +69,10 @@ def error(bot, update, error):
 def main():
     """Start the bot."""
     # Create the EventHandler and pass it your bot's token.
-    updater = Updater(env["token"], workers = 1)
+    updater = Updater(os.environ["BOT_TOKEN"], workers = 1)
 
-    updater.start_webhook(listen="0.0.0.0", port=PORT, url_path=env["token"])
-    updater.bot.set_webhook(env["webhook"] + env["token"])
+    updater.start_webhook(listen="0.0.0.0", port=PORT, url_path=os.environ["BOT_TOKEN"])
+    updater.bot.set_webhook(os.environ["WEB_HOOK"] + os.environ["BOT_TOKEN"])
 
     # Get the dispatcher to register handlers
     dp = updater.dispatcher
