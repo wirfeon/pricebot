@@ -5,24 +5,9 @@ import logging
 import requests
 import json
 import os
-
+from copy import copy
 from telegram.ext import Updater, CommandHandler, MessageHandler, Filters
 from datetime import datetime
-
-ENV = "master"
-
-params = {
-    "master": {
-        "token": "554022144:AAFDYJkAZSH6flnmPujbJ1nmtnaJ7DPMTZA",
-        "webhook": "https://shielded-peak-77662.herokuapp.com/"
-    },
-    "test": {
-        "token": "603298832:AAGLTud_E45rzm8rtx9eneodOOJJJqxzVsM",
-        "webhook": "https://pacific-chamber-20771.herokuapp.com/"
-    }
-}    
-
-env = params[ENV]
 
 PORT = int(os.environ.get('PORT', '8443'))
 
@@ -32,18 +17,31 @@ logging.basicConfig(format='%(asctime)s - %(name)s - %(levelname)s - %(message)s
 logger = logging.getLogger(__name__)
 
 template = { "ask": -1, "bid": -1, "xem": -1, "timer": 0 }
-db = { "XAR": template, "CVZ": template }
+db = { "XAR": copy(template), "CVZ": copy(template), "XPX": copy(template)}
 db["XAR"]["name"] = "xarcade:xar"
 db["CVZ"]["name"] = "coinvest:vezcoin"
+db["XPX"]["name"] = "prx:xpx"
 
 # Define a few command handlers. These usually take the two arguments bot and
 # update. Error handlers also receive the raised TelegramError object in error.
+def priceall(bot, update):
+    chat_title = update.message.chat.title
+    
+    if (chat_title == "Test"):
+        update.message.chat.title = "myCoinvest"
+        price(bot, update)
+        update.message.chat.title = "ProximaX Wakanda"
+        price(bot, update)
+    #endif
+#enddef 
+
 def price(bot, update):
 
     chat_title = update.message.chat.title
-
-    if (chat_title == "Test"):
-        coin_ticker = "XAR"
+    
+    logger.info(chat_title)
+    if (chat_title == "ProximaX Wakanda"):
+        coin_ticker = "XPX"
     elif (chat_title == "myCoinvest"):
         coin_ticker = "CVZ"
     else: 
@@ -53,21 +51,22 @@ def price(bot, update):
     coin = db[coin_ticker]
     ctime = datetime.now().timestamp()
 
-    if ((ctime > coin["timer"] + 10) or (coin["ask"] == -1) or (coin["bid"] == -1) or (coin["xem"] == -1)):
+    if ((ctime > coin["timer"] + 10) or (coin["bid"] == -1) or (coin["xem"] == -1)):
         logger.info("Pulling data on '{:s}'".format(coin["name"]))
  
-        body = requests.get("https://nemchange.com/Exchange/market/" + coin["name"] + "/nem:xem").text
+        #body = requests.get("https://nemchange.com/Exchange/market/" + coin["name"] + "/nem:xem").text
+        body = requests.get("https://nemchange.com//Exchange/actualOrders2/" + coin["name"] + "/nem:xem")
+        if (body.text == "{}"):
+            update.message.chat.send_message("Coming soon...")
+            return
+        #endif
 
-        token = '<td id = "ratio2_0">'
-        start = body.find(token)
-        end = body.find("</td>", start)
-        coin["ask"] = float(body[start + len(token) : end])
+        token = "<td id='ratio2_0'>"
+        start = body.text.find(token)
+        end = body.text.find("</td>", start)
+        ratio = float(body.text[start + len(token) : end])
 
-        token = '<td id = "ratio_0">'
-        start = body.find(token, end)
-        end = body.find("</td>", start)
-        coin["bid"] = float(body[start + len(token) : end])
-
+        coin["bid"] = 1 / ratio
         coin["xem"] = float(json.loads(requests.get('https://api.coinmarketcap.com/v1/ticker/nem/').text)[0]["price_usd"])
         
         coin["timer"] = ctime
@@ -80,20 +79,22 @@ def price(bot, update):
 def error(bot, update, error):
     """Log Errors caused by Updates."""
     logger.warning('Update "%s" caused error "%s"', update, error)
+    update.message.chat.send_message("Coming soon...")
 
 def main():
     """Start the bot."""
     # Create the EventHandler and pass it your bot's token.
-    updater = Updater(env["token"], workers = 1)
+    updater = Updater(os.environ["BOT_TOKEN"], workers = 1)
 
-    updater.start_webhook(listen="0.0.0.0", port=PORT, url_path=env["token"])
-    updater.bot.set_webhook(env["webhook"] + env["token"])
+    updater.start_webhook(listen="0.0.0.0", port=PORT, url_path=os.environ["BOT_TOKEN"])
+    updater.bot.set_webhook(os.environ["WEB_HOOK"] + os.environ["BOT_TOKEN"])
 
     # Get the dispatcher to register handlers
     dp = updater.dispatcher
 
     # on different commands - answer in Telegram
     dp.add_handler(CommandHandler("price", price))
+    dp.add_handler(CommandHandler("priceall", priceall))
 
     # log all errors
     dp.add_error_handler(error)
