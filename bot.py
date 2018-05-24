@@ -52,12 +52,12 @@ def price(bot, update):
     logger.info("%s %s" % (coin_ticker, coin["name"]))
     ctime = datetime.now().timestamp()
 
-    if ((ctime > coin["timer"] + 10) or (coin["ask"] == -1) or (coin["bid"] == -1) or (coin["xem"] == -1)):
+    if ((ctime > coin["timer"] + 10) or (coin["bid"] == -1) or (coin["xem"] == -1)):
         logger.info("Pulling data on '{:s}'".format(coin["name"]))
  
         #body = requests.get("https://nemchange.com/Exchange/market/" + coin["name"] + "/nem:xem").text
-        body = requests.get("https://nemchange.com//Exchange/actualOrders2/nem:xem/" + coin["name"])
-        if (body == "{}"):
+        body = requests.get("https://nemchange.com//Exchange/actualOrders2/" + coin["name"] + "/nem:xem")
+        if (body.text == "{}"):
             update.message.chat.send_message("Coming soon...")
             return
         #endif
@@ -65,17 +65,14 @@ def price(bot, update):
         token = "<td id='ratio2_0'>"
         start = body.text.find(token)
         end = body.text.find("</td>", start)
-        #logger.info("%d %d" % (start, end))
-        #logger.info(body)
-        coin["ask"] = float(body.text[start + len(token) : end])
+        ratio = float(body.text[start + len(token) : end])
 
-        
-        #token = "<td id='ratio_0'>"
-        #start = body.text.find(token, end)
-        #end = body.text.find("</td>", start)
-        #logger.info("%d %d" % (start, end))
-        #coin["bid"] = float(body.text[start + len(token) : end])
+        token = "<td id='to2_0'>"
+        start = body.text.find(token)
+        end = body.text.find("</td>", start)
+        amount = float(body.text[start + len(token) : end])
 
+        coin["bid"] = amount / ratio
         coin["xem"] = float(json.loads(requests.get('https://api.coinmarketcap.com/v1/ticker/nem/').text)[0]["price_usd"])
         
         coin["timer"] = ctime
