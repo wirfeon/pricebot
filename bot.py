@@ -24,17 +24,20 @@ db["XPX"]["name"] = "prx:xpx"
 
 # Define a few command handlers. These usually take the two arguments bot and
 # update. Error handlers also receive the raised TelegramError object in error.
-def price(bot, update):
-
-    chat_title = update.message.chat.title
-
+def priceall(bot, update):
     if (chat_title == "Test"):
         update.message.chat.title = "myCoinvest"
         price(bot, update)
         update.message.chat.title = "ProximaX Wakanda"
         price(bot, update)
-        return;
-    elif (chat_title == "ProximaX Wakanda"):
+    #endif
+#enddef 
+
+def price(bot, update):
+
+    chat_title = update.message.chat.title
+
+    if (chat_title == "ProximaX Wakanda"):
         coin_ticker = "XPX"
     elif (chat_title == "myCoinvest"):
         coin_ticker = "CVZ"
