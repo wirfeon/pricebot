@@ -65,6 +65,7 @@ def price(bot, update):
         token = "<td id = 'ratio2_0'>"
         start = body.find(token)
         end = body.find("</td>", start)
+        logger.info("%d %d" % (start, end))
         coin["ask"] = float(body[start + len(token) : end])
 
         token = "<td id = 'ratio_0'>"
