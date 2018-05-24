@@ -62,16 +62,17 @@ def price(bot, update):
             return
         #endif
 
-        token = "<td id = 'ratio2_0'>"
+        token = "<td id = 'ratio2_0' >"
         start = body.find(token)
         end = body.find("</td>", start)
         logger.info("%d %d" % (start, end))
-        logger.info(body)
+        #logger.info(body)
         coin["ask"] = float(body[start + len(token) : end])
 
-        token = "<td id = 'ratio_0'>"
+        token = "<td id = 'ratio_0' >"
         start = body.find(token, end)
         end = body.find("</td>", start)
+        logger.info("%d %d" % (start, end))
         coin["bid"] = float(body[start + len(token) : end])
 
         coin["xem"] = float(json.loads(requests.get('https://api.coinmarketcap.com/v1/ticker/nem/').text)[0]["price_usd"])
