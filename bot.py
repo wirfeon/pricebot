@@ -48,6 +48,7 @@ def price(bot, update):
         return;
     #endif
 
+    logger.info(coin_ticker)
     coin = db[coin_ticker]
     ctime = datetime.now().timestamp()
 
