@@ -17,9 +17,10 @@ logging.basicConfig(format='%(asctime)s - %(name)s - %(levelname)s - %(message)s
 logger = logging.getLogger(__name__)
 
 template = { "ask": -1, "bid": -1, "xem": -1, "timer": 0 }
-db = { "XAR": template, "CVZ": template }
+db = { "XAR": template, "CVZ": template, "XPX": template}
 db["XAR"]["name"] = "xarcade:xar"
 db["CVZ"]["name"] = "coinvest:vezcoin"
+db["XPX"]["name"] = "prx:xpx"
 
 # Define a few command handlers. These usually take the two arguments bot and
 # update. Error handlers also receive the raised TelegramError object in error.
@@ -28,7 +29,8 @@ def price(bot, update):
     chat_title = update.message.chat.title
 
     if (chat_title == "Test"):
-        coin_ticker = "XAR"
+        #coin_ticker = "XAR"
+        coin_ticker = "XPX"
     elif (chat_title == "myCoinvest"):
         coin_ticker = "CVZ"
     else: 
@@ -65,6 +67,7 @@ def price(bot, update):
 def error(bot, update, error):
     """Log Errors caused by Updates."""
     logger.warning('Update "%s" caused error "%s"', update, error)
+    update.message.chat.send_message("Coming soon...")
 
 def main():
     """Start the bot."""
