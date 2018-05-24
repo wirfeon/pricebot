@@ -38,7 +38,8 @@ def priceall(bot, update):
 def price(bot, update):
 
     chat_title = update.message.chat.title
-
+    
+    logger.info(chat_title)
     if (chat_title == "ProximaX Wakanda"):
         coin_ticker = "XPX"
     elif (chat_title == "myCoinvest"):
