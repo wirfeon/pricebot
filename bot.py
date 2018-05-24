@@ -29,7 +29,12 @@ def price(bot, update):
     chat_title = update.message.chat.title
 
     if (chat_title == "Test"):
-        #coin_ticker = "XAR"
+        update.message.chat.title = "myCoinvest"
+        price(bot, update)
+        update.message.chat.title = "ProximaX Wakanda"
+        price(bot, update)
+        return;
+    elif (chat_title == "ProximaX Wakanda"):
         coin_ticker = "XPX"
     elif (chat_title == "myCoinvest"):
         coin_ticker = "CVZ"
