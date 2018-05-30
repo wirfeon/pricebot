@@ -79,7 +79,6 @@ def price(bot, update):
 def error(bot, update, error):
     """Log Errors caused by Updates."""
     logger.warning('Update "%s" caused error "%s"', update, error)
-    update.message.chat.send_message("Coming soon...")
 
 def main():
     """Start the bot."""
