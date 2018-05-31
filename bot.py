@@ -37,7 +37,7 @@ def priceall(bot, update):
 #enddef 
 
 def kryptono(bot, update):
-	websocket.enableTrace(True)
+    websocket.enableTrace(True)
     ws = websocket.create_connection("ws://echo.websocket.org/")
     logger.info("Sending 'Hello, World'...")
     ws.send("Hello, World")
@@ -45,7 +45,7 @@ def kryptono(bot, update):
     logger.info("Receiving...")
     result = ws.recv()
     logger.info("Received '%s'" % result)
-	ws.close() 
+    ws.close() 
 
 def price(bot, update):
 
