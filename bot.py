@@ -70,7 +70,7 @@ def price(bot, update):
     chat_title = update.message.chat.title
     
     logger.info(chat_title)
-    if (chat_title == "ProximaX Wakanda"):
+    if (chat_title in ("ProximaX Wakanda", "ProximaX Czech & Slovakia Official")):
         coin_ticker = "XPX"
     elif (chat_title == "myCoinvest"):
         coin_ticker = "CVZ"
@@ -80,14 +80,17 @@ def price(bot, update):
 
     coin = db[coin_ticker]
     ctime = datetime.now().timestamp()
-
+    
+    if (update.message.date.timestamp() + 10 < ctime):
+        logger.info("Request is too old %f %f" % (update.message.date.timestamp(), ctime))
+        return
+    
     if ((ctime > coin["timer"] + 10) or (coin["bid"] == -1) or (coin["xem"] == -1)):
         logger.info("Pulling data on '{:s}'".format(coin["name"]))
  
         #body = requests.get("https://nemchange.com/Exchange/market/" + coin["name"] + "/nem:xem").text
         body = requests.get("https://nemchange.com//Exchange/actualOrders2/" + coin["name"] + "/nem:xem")
         if (body.text == "{}"):
-            update.message.chat.send_message("Coming soon...")
             return
         #endif
 
@@ -109,7 +112,6 @@ def price(bot, update):
 def error(bot, update, error):
     """Log Errors caused by Updates."""
     logger.warning('Update "%s" caused error "%s"', update, error)
-    update.message.chat.send_message("Coming soon...")
 
 def main():
     """Start the bot."""
