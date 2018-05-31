@@ -47,7 +47,7 @@ def pricexpx(bot, update):
     update.message.chat.send_message("1 {:s} = ${:.5f} = {:d} sat = {:.4f} XEM".format("XPX", xpx_btc * btc_usd, int(xpx_btc * 100000000), xpx_btc / xem_btc))
 
 def scraper(bot, job):
-    global btc_usd, xpx_btc, xem_btc, cmc_ts
+    global btc_usd, xpx_btc, xem_btc, xem_usd, cmc_ts
 
     while 1:
         result = ws.recv()
@@ -94,13 +94,13 @@ def nemchange(bot, update, ticker):
     bid = 1 / ratio
     #coin["xem"] = float(json.loads(requests.get('https://api.coinmarketcap.com/v1/ticker/nem/').text)[0]["price_usd"])
         
-    logger.info("Rresponding to %u '%s'" % (update.message.chat.id, update.message.chat.title))
+    #logger.info("Rresponding to %u '%s'" % (update.message.chat.id, update.message.chat.title))
     update.message.chat.send_message("1 {:s} = {:.4f} XEM = ${:.5f}".format(ticker, bid, bid * xem_usd))
 
 def price(bot, update):
 
     chat_title = update.message.chat.title
-    logger.info("Request from '%s'" % chat_title)
+    logger.info("Request from %lu'%s'" % (update.message.chat.id, chat_title))
 
     ctime = datetime.now().timestamp()
     
