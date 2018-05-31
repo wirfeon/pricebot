@@ -67,8 +67,7 @@ def scraper(bot, job):
     #endif
 
     for ticker in data["d"]:
-        #if ticker["s"] == "XPX_BTC":
-        if ticker["s"] == "TRX_BTC":
+        if ticker["s"] == "XPX_BTC":
             xpx_btc = float(ticker["n"])
             #logger.info("%f %f" % (xpx_btc * 100000000, xpx_btc * btc_usd)) 
             break
