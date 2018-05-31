@@ -45,7 +45,7 @@ def priceall(bot, update):
 #enddef 
 
 def pricexpx(bot, update):
-    update.message.chat.send_message("1 {:s} = {:.4f} XEM = {:d} sat = ${:.5f}".format("XPX", xem_btc / xpx_btc, int(xpx_btc * 100000000), xpx_btc * btc_usd))
+    update.message.chat.send_message("1 {:s} = {:.4f} XEM = {:d} sat = ${:.5f}".format("XPX", xpx_btc / xem_btc, int(xpx_btc * 100000000), xpx_btc * btc_usd))
 
 def kryptono(bot, job):
     global btc_usd, xpx_btc, xem_btc, cmc_ts
