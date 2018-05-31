@@ -35,19 +35,28 @@ def priceall(bot, update):
         update.message.chat.title = "myCoinvest"
         price(bot, update)
         update.message.chat.title = "ProximaX Wakanda"
-        price(bot, update)
+        pricexpx(bot, update)
     #endif
 #enddef 
 
 btc_usd = 0
 xpx_btc = 0
+xem_btc = 0
+cmc_ts = 0
 
-def kryptono(bot, update):
-    btc_usd = float(json.loads(requests.get('https://api.coinmarketcap.com/v1/ticker/bitcoin/').text)[0]["price_usd"])
+def pricexpx(bot, update):
+    update.message.chat.send_message("1 {:s} = {:.4f} XEM = {:d} sat = ${:.5f}".format("XPX", xem_btc / xpx_btc, xpx_btc * 100000000, xpx_btc * btc_usd))
+
+def kryptono(bot, job):
     
     result = ws.recv()
     #logger.info("Received '%s'" % result)
     data = json.loads(result)
+    if int(data["t"]) - cmc_ts > 10000:
+        btc_usd = float(json.loads(requests.get('https://api.coinmarketcap.com/v1/ticker/bitcoin/').text)[0]["price_usd"])
+        xem_btc = float(json.loads(requests.get('https://api.coinmarketcap.com/v1/ticker/nem/').text)[0]["price_btc"])
+        cmc_ts = int(data["t"])
+
     for ticker in data["d"]:
         #if ticker["s"] == "XPX_BTC":
         if ticker["s"] == "TRX_BTC":
