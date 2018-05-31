@@ -49,7 +49,8 @@ def kryptono(bot, update):
     #logger.info("Received '%s'" % result)
     data = json.loads(result)
     for ticker in data["d"]:
-        if ticker["s"] == "XPX_BTC":
+        #if ticker["s"] == "XPX_BTC":
+        if ticker["s"] == "TRX_BTC":
             xpx_btc = float(ticker["n"])
             logger.info("%f %f" % (xpx_btc * 100000000, xpx_btc * btc_usd)) 
             break
