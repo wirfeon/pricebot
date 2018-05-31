@@ -5,6 +5,7 @@ verify_ssl = true
 [packages]
 python-telegram-bot = "*"
 requests = "*"
+websocket-client = "*"
 
 [requires]
 python_version = "3.5.2"

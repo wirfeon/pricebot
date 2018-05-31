@@ -5,6 +5,7 @@ import logging
 import requests
 import json
 import os
+import websocket
 from copy import copy
 from telegram.ext import Updater, CommandHandler, MessageHandler, Filters
 from datetime import datetime
@@ -34,6 +35,9 @@ def priceall(bot, update):
         price(bot, update)
     #endif
 #enddef 
+
+def kryptono(bot, update):
+    
 
 def price(bot, update):
 
