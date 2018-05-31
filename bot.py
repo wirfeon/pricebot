@@ -48,7 +48,8 @@ def pricexpx(bot, update):
     update.message.chat.send_message("1 {:s} = {:.4f} XEM = {:d} sat = ${:.5f}".format("XPX", xem_btc / xpx_btc, xpx_btc * 100000000, xpx_btc * btc_usd))
 
 def kryptono(bot, job):
-    
+    global btc_usd, xpx_btc, xem_btc, cmc_ts
+
     result = ws.recv()
     #logger.info("Received '%s'" % result)
     data = json.loads(result)
@@ -152,7 +153,9 @@ def main():
     # SIGTERM or SIGABRT. This should be used most of the time, since
     # start_polling() is non-blocking and will stop the bot gracefully.
     updater.idle()
-    
+   
+    updater.stop()
+ 
     ws.shutdown()
     ws.close() 
 
