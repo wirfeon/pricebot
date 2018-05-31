@@ -35,7 +35,7 @@ def priceall(bot, update):
         update.message.chat.title = "myCoinvest"
         price(bot, update)
         update.message.chat.title = "ProximaX Wakanda"
-        pricexpx(bot, update)
+        price(bot, update)
     #endif
 #enddef 
 
@@ -47,6 +47,8 @@ def scraper(bot, job):
 
     result = ws.recv()
     data = json.loads(result)
+
+    logger.info("Scraping %.2f" % (datetime.now().timestamp() * 1000 - int(data["t"])))
 
     if int(data["t"]) - cmc_ts > 10000:
         btc_usd = float(json.loads(requests.get('https://api.coinmarketcap.com/v1/ticker/bitcoin/').text)[0]["price_usd"])
@@ -74,6 +76,7 @@ def nemchange(bot, update, ticker):
  
     body = requests.get("https://nemchange.com//Exchange/actualOrders2/" + ticker + "/nem:xem")
     if (body.text == "{}"):
+        logger.warn("Empty response")
         return
     #endif
 
@@ -101,7 +104,7 @@ def price(bot, update):
     #endif
 
     if (chat_title in ("ProximaX Wakanda", "ProximaX Czech & Slovakia Official")):
-        price_xpx(bot, update)
+        pricexpx(bot, update)
     elif (chat_title == "myCoinvest"):
         nemchange(bot, update, "CVZ")
     else: 
