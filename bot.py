@@ -48,7 +48,7 @@ def scraper(bot, job):
     while 1:
         result = ws.recv()
         data = json.loads(result)
-        diff = datetime.now().timestamp() * 1000 - int(data["t"]))
+        diff = datetime.now().timestamp() * 1000 - int(data["t"])
         logger.info("Scraping %.2f" % (datetime.now().timestamp() * 1000 - int(data["t"])))
         if (diff < 3000): break
 
