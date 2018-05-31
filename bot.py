@@ -107,6 +107,7 @@ def main():
     # on different commands - answer in Telegram
     dp.add_handler(CommandHandler("price", price))
     dp.add_handler(CommandHandler("priceall", priceall))
+    dp.add_handler(CommandHandler("kryptono", kryptono))
 
     # log all errors
     dp.add_error_handler(error)
