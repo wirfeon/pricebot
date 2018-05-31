@@ -143,7 +143,7 @@ def main():
     logger.info("Received '%s'" % result)
 
     job = updater.job_queue
-    #job_sec = job.run_repeating(kryptono, interval=1, first=0)
+    job_sec = job.run_repeating(kryptono, interval=3, first=0)
 
     # log all errors
     dp.add_error_handler(error)
