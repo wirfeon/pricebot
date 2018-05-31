@@ -23,6 +23,9 @@ db["XAR"]["name"] = "xarcade:xar"
 db["CVZ"]["name"] = "coinvest:vezcoin"
 db["XPX"]["name"] = "prx:xpx"
 
+websocket.enableTrace(True)
+ws = websocket.WebSocket()
+
 # Define a few command handlers. These usually take the two arguments bot and
 # update. Error handlers also receive the raised TelegramError object in error.
 def priceall(bot, update):
@@ -37,20 +40,8 @@ def priceall(bot, update):
 #enddef 
 
 def kryptono(bot, update):
-    websocket.enableTrace(True)
-    ws = websocket.WebSocket()
-    #ws.connect("ws://echo.websocket.org/")
-    ws.connect("wss://engines.kryptono.exchange/ws/v1/tk/", headers = ["Connection: Upgrade", "Upgrade: websocket", "Host: engines.kryptono.exchange", "Origin: https://kryptono.exchange", "Sec-WebSocket-Extensions: permessage-deflate; client_max_window_bits", "Sec-WebSocket-Key: lctUilr7TifuqRxnS4hs0Q==", "Sec-WebSocket-Version: 13"])
-    #logger.info("Sending 'Hello, World'...")
-    #ws.send("Hello, World")
-    #logger.info("Sent")
-    logger.info("Receiving...")
     result = ws.recv()
     logger.info("Received '%s'" % result)
-    while result:
-        result = ws.recv()
-        logger.info("Received '%s'" % result)
-    ws.close() 
 
 def price(bot, update):
 
@@ -114,6 +105,22 @@ def main():
     dp.add_handler(CommandHandler("priceall", priceall))
     dp.add_handler(CommandHandler("kryptono", kryptono))
 
+    ws.connect("wss://engines.kryptono.exchange/ws/v1/tk/", 
+        headers = ["Connection: Upgrade", 
+            "Upgrade: websocket", 
+            "Host: engines.kryptono.exchange", 
+            "Origin: https://kryptono.exchange", 
+            "Sec-WebSocket-Extensions: permessage-deflate; client_max_window_bits", 
+            "Sec-WebSocket-Key: lctUilr7TifuqRxnS4hs0Q==", 
+            "Sec-WebSocket-Version: 13"])
+
+    logger.info("Receiving...")
+    result = ws.recv()
+    logger.info("Received '%s'" % result)
+
+    job = updater.job_queue
+    job_sec = job.run_repeating(kryptono, interval=1, first=0)
+
     # log all errors
     dp.add_error_handler(error)
 
@@ -124,6 +131,8 @@ def main():
     # SIGTERM or SIGABRT. This should be used most of the time, since
     # start_polling() is non-blocking and will stop the bot gracefully.
     updater.idle()
+    
+    ws.close() 
 
 
 if __name__ == '__main__':
