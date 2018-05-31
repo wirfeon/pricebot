@@ -70,7 +70,7 @@ def scraper(bot, job):
 def nemchange(bot, update, ticker):
     global xem_usd
 
-    logger.info("Pulling data on '{:s}'".format(coin["name"]))
+    logger.info("Pulling data on '{:s}'".format(ticker))
  
     body = requests.get("https://nemchange.com//Exchange/actualOrders2/" + ticker + "/nem:xem")
     if (body.text == "{}"):
