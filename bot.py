@@ -39,13 +39,19 @@ def priceall(bot, update):
     #endif
 #enddef 
 
+btc_usd = 0
+xpx_btc = 0
+
 def kryptono(bot, update):
+    btc_usd = float(json.loads(requests.get('https://api.coinmarketcap.com/v1/ticker/bitcoin/').text)[0]["price_usd"])
+    
     result = ws.recv()
     #logger.info("Received '%s'" % result)
     data = json.loads(result)
     for ticker in data["d"]:
-        if ticker["s"] == "TRX_KNOW":
-            logger.info(ticker)
+        if ticker["s"] == "XPX_BTC":
+            xpx_btc = float(ticker["n"])
+            logger.info("%f %f" % (xpx_btc * 100000000, xpx_btc * btc_usd)) 
             break
 
 def price(bot, update):
@@ -131,12 +137,13 @@ def main():
 
     # Start the Bot
     updater.start_polling()
-
+ 
     # Run the bot until you press Ctrl-C or the process receives SIGINT,
     # SIGTERM or SIGABRT. This should be used most of the time, since
     # start_polling() is non-blocking and will stop the bot gracefully.
     updater.idle()
     
+    ws.shutdown()
     ws.close() 
 
 
