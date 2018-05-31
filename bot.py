@@ -41,7 +41,8 @@ def price(bot, update):
     
     logger.info(chat_title)
     if (chat_title in ("ProximaX Wakanda", "ProximaX Czech & Slovakia Official")):
-        coin_ticker = "XPX"
+        return
+        #coin_ticker = "XPX"
     elif (chat_title == "myCoinvest"):
         coin_ticker = "CVZ"
     else: 
