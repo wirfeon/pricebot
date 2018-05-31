@@ -52,6 +52,7 @@ def price(bot, update):
     ctime = datetime.now().timestamp()
     
     if (update.message.date.timestamp() + 10 < ctime):
+        logger.info("Request is too old %f %f" % (update.message.date.timestamp(), ctime))
         return
     
     if ((ctime > coin["timer"] + 10) or (coin["bid"] == -1) or (coin["xem"] == -1)):
