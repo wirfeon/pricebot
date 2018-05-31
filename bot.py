@@ -45,7 +45,7 @@ def priceall(bot, update):
 #enddef 
 
 def pricexpx(bot, update):
-    update.message.chat.send_message("1 {:s} = {:.4f} XEM = {:d} sat = ${:.5f}".format("XPX", xem_btc / xpx_btc, xpx_btc * 100000000, xpx_btc * btc_usd))
+    update.message.chat.send_message("1 {:s} = {:.4f} XEM = {:d} sat = ${:.5f}".format("XPX", xem_btc / xpx_btc, int(xpx_btc * 100000000), xpx_btc * btc_usd))
 
 def kryptono(bot, job):
     global btc_usd, xpx_btc, xem_btc, cmc_ts
@@ -125,7 +125,6 @@ def main():
     # on different commands - answer in Telegram
     dp.add_handler(CommandHandler("price", price))
     dp.add_handler(CommandHandler("priceall", priceall))
-    dp.add_handler(CommandHandler("kryptono", kryptono))
 
     ws.connect("wss://engines.kryptono.exchange/ws/v1/tk/", 
         headers = ["Connection: Upgrade", 
