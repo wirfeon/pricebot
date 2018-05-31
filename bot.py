@@ -38,10 +38,12 @@ def priceall(bot, update):
 
 def kryptono(bot, update):
     websocket.enableTrace(True)
-    ws = websocket.create_connection("ws://echo.websocket.org/")
-    logger.info("Sending 'Hello, World'...")
-    ws.send("Hello, World")
-    logger.info("Sent")
+    ws = websocket.WebSocket()
+    #ws.connect("ws://echo.websocket.org/")
+    ws.connect("wss://engines.kryptono.exchange/ws/v1/tk/", headers = ["Connection: Upgrade", "Upgrade: websocket", "Host: engines.kryptono.exchange", "Origin: https://kryptono.exchange", "Sec-WebSocket-Extensions: permessage-deflate; client_max_window_bits", "Sec-WebSocket-Key: lctUilr7TifuqRxnS4hs0Q==", "Sec-WebSocket-Version: 13"])
+    #logger.info("Sending 'Hello, World'...")
+    #ws.send("Hello, World")
+    #logger.info("Sent")
     logger.info("Receiving...")
     result = ws.recv()
     logger.info("Received '%s'" % result)
