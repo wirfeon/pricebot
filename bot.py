@@ -17,18 +17,13 @@ logging.basicConfig(format='%(asctime)s - %(name)s - %(levelname)s - %(message)s
 
 logger = logging.getLogger(__name__)
 
-template = { "ask": -1, "bid": -1, "xem": -1, "timer": 0 }
-db = { "XAR": copy(template), "CVZ": copy(template), "XPX": copy(template)}
-db["XAR"]["name"] = "xarcade:xar"
-db["CVZ"]["name"] = "coinvest:vezcoin"
-db["XPX"]["name"] = "prx:xpx"
-
 websocket.enableTrace(True)
 ws = websocket.WebSocket()
 
 btc_usd = 0
 xpx_btc = 0
 xem_btc = 0
+xem_usd = 0
 cmc_ts = 0
 
 # Define a few command handlers. These usually take the two arguments bot and
@@ -38,25 +33,30 @@ def priceall(bot, update):
     
     if (chat_title == "Test"):
         update.message.chat.title = "myCoinvest"
-        #price(bot, update)
+        price(bot, update)
         update.message.chat.title = "ProximaX Wakanda"
         pricexpx(bot, update)
     #endif
 #enddef 
 
 def pricexpx(bot, update):
-    update.message.chat.send_message("1 {:s} = {:.4f} XEM = {:d} sat = ${:.5f}".format("XPX", xpx_btc / xem_btc, int(xpx_btc * 100000000), xpx_btc * btc_usd))
+    update.message.chat.send_message("1 {:s} = ${:.5f} = {:d} sat = {:.4f} XEM".format("XPX", xpx_btc * btc_usd, int(xpx_btc * 100000000), xpx_btc / xem_btc))
 
-def kryptono(bot, job):
+def scraper(bot, job):
     global btc_usd, xpx_btc, xem_btc, cmc_ts
 
     result = ws.recv()
-    #logger.info("Received '%s'" % result)
     data = json.loads(result)
+
     if int(data["t"]) - cmc_ts > 10000:
         btc_usd = float(json.loads(requests.get('https://api.coinmarketcap.com/v1/ticker/bitcoin/').text)[0]["price_usd"])
-        xem_btc = float(json.loads(requests.get('https://api.coinmarketcap.com/v1/ticker/nem/').text)[0]["price_btc"])
+        
+        xx = json.loads(requests.get('https://api.coinmarketcap.com/v1/ticker/nem/').text)[0]
+        xem_btc = float(xx["price_btc"])
+        xem_usd = float(xx["price_usd"])
+        
         cmc_ts = int(data["t"])
+    #endif
 
     for ticker in data["d"]:
         #if ticker["s"] == "XPX_BTC":
@@ -64,50 +64,51 @@ def kryptono(bot, job):
             xpx_btc = float(ticker["n"])
             logger.info("%f %f" % (xpx_btc * 100000000, xpx_btc * btc_usd)) 
             break
+        #endif
+    #endfor
+
+def nemchange(bot, update, ticker):
+    global xem_usd
+
+    logger.info("Pulling data on '{:s}'".format(coin["name"]))
+ 
+    body = requests.get("https://nemchange.com//Exchange/actualOrders2/" + ticker + "/nem:xem")
+    if (body.text == "{}"):
+        return
+    #endif
+
+    token = "<td id='ratio2_0'>"
+    start = body.text.find(token)
+    end = body.text.find("</td>", start)
+    ratio = float(body.text[start + len(token) : end])
+
+    bid = 1 / ratio
+    #coin["xem"] = float(json.loads(requests.get('https://api.coinmarketcap.com/v1/ticker/nem/').text)[0]["price_usd"])
+        
+    logger.info("Rresponding to %u '%s'" % (update.message.chat.id, update.message.chat.title))
+    update.message.chat.send_message("1 {:s} = {:.4f} XEM = ${:.5f}".format(ticker, bid, bid * xem_usd))
 
 def price(bot, update):
 
     chat_title = update.message.chat.title
-    
-    logger.info(chat_title)
-    if (chat_title in ("ProximaX Wakanda", "ProximaX Czech & Slovakia Official")):
-        coin_ticker = "XPX"
-    elif (chat_title == "myCoinvest"):
-        coin_ticker = "CVZ"
-    else: 
-        return;
-    #endif
+    logger.info("Request from '%s'" % chat_title)
 
     coin = db[coin_ticker]
     ctime = datetime.now().timestamp()
     
     if (update.message.date.timestamp() + 10 < ctime):
-        logger.info("Request is too old %f %f" % (update.message.date.timestamp(), ctime))
+        logger.warn("Request is too old %f %f" % (update.message.date.timestamp(), ctime))
         return
-    
-    if ((ctime > coin["timer"] + 10) or (coin["bid"] == -1) or (coin["xem"] == -1)):
-        logger.info("Pulling data on '{:s}'".format(coin["name"]))
- 
-        #body = requests.get("https://nemchange.com/Exchange/market/" + coin["name"] + "/nem:xem").text
-        body = requests.get("https://nemchange.com//Exchange/actualOrders2/" + coin["name"] + "/nem:xem")
-        if (body.text == "{}"):
-            return
-        #endif
-
-        token = "<td id='ratio2_0'>"
-        start = body.text.find(token)
-        end = body.text.find("</td>", start)
-        ratio = float(body.text[start + len(token) : end])
-
-        coin["bid"] = 1 / ratio
-        coin["xem"] = float(json.loads(requests.get('https://api.coinmarketcap.com/v1/ticker/nem/').text)[0]["price_usd"])
-        
-        coin["timer"] = ctime
     #endif
-        
-    logger.info("%u '%s'" % (update.message.chat.id, update.message.chat.title))
-    #update.message.reply_text("ASK: {:.4f} BID: {:.4f}".format(ask, bid))
-    update.message.chat.send_message("1 {:s} = {:.4f} XEM = ${:.5f}".format(coin_ticker, coin["bid"], coin["bid"] * coin["xem"]))
+
+    if (chat_title in ("ProximaX Wakanda", "ProximaX Czech & Slovakia Official")):
+        price_xpx(bot, update)
+    elif (chat_title == "myCoinvest"):
+        nemchange(bot, update, "CVZ")
+    else: 
+        return;
+    #endif
+    
 
 def error(bot, update, error):
     """Log Errors caused by Updates."""
@@ -142,7 +143,7 @@ def main():
     logger.info("Received '%s'" % result)
 
     job = updater.job_queue
-    job_sec = job.run_repeating(kryptono, interval=1, first=0)
+    #job_sec = job.run_repeating(kryptono, interval=1, first=0)
 
     # log all errors
     dp.add_error_handler(error)
