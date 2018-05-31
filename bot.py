@@ -45,10 +45,12 @@ def pricexpx(bot, update):
 def scraper(bot, job):
     global btc_usd, xpx_btc, xem_btc, cmc_ts
 
-    result = ws.recv()
-    data = json.loads(result)
-
-    logger.info("Scraping %.2f" % (datetime.now().timestamp() * 1000 - int(data["t"])))
+    while 1:
+        result = ws.recv()
+        data = json.loads(result)
+        diff = datetime.now().timestamp() * 1000 - int(data["t"]))
+        logger.info("Scraping %.2f" % (datetime.now().timestamp() * 1000 - int(data["t"])))
+        if (diff < 3000): break
 
     if int(data["t"]) - cmc_ts > 10000:
         btc_usd = float(json.loads(requests.get('https://api.coinmarketcap.com/v1/ticker/bitcoin/').text)[0]["price_usd"])
@@ -64,7 +66,7 @@ def scraper(bot, job):
         #if ticker["s"] == "XPX_BTC":
         if ticker["s"] == "TRX_BTC":
             xpx_btc = float(ticker["n"])
-            logger.info("%f %f" % (xpx_btc * 100000000, xpx_btc * btc_usd)) 
+            #logger.info("%f %f" % (xpx_btc * 100000000, xpx_btc * btc_usd)) 
             break
         #endif
     #endfor
