@@ -26,6 +26,11 @@ db["XPX"]["name"] = "prx:xpx"
 websocket.enableTrace(True)
 ws = websocket.WebSocket()
 
+btc_usd = 0
+xpx_btc = 0
+xem_btc = 0
+cmc_ts = 0
+
 # Define a few command handlers. These usually take the two arguments bot and
 # update. Error handlers also receive the raised TelegramError object in error.
 def priceall(bot, update):
@@ -38,11 +43,6 @@ def priceall(bot, update):
         pricexpx(bot, update)
     #endif
 #enddef 
-
-btc_usd = 0
-xpx_btc = 0
-xem_btc = 0
-cmc_ts = 0
 
 def pricexpx(bot, update):
     update.message.chat.send_message("1 {:s} = {:.4f} XEM = {:d} sat = ${:.5f}".format("XPX", xem_btc / xpx_btc, xpx_btc * 100000000, xpx_btc * btc_usd))
