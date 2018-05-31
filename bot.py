@@ -47,6 +47,9 @@ def kryptono(bot, update):
     logger.info("Receiving...")
     result = ws.recv()
     logger.info("Received '%s'" % result)
+    while result:
+        result = ws.recv()
+        logger.info("Received '%s'" % result)
     ws.close() 
 
 def price(bot, update):
