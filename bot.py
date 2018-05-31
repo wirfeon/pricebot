@@ -93,7 +93,6 @@ def price(bot, update):
     chat_title = update.message.chat.title
     logger.info("Request from '%s'" % chat_title)
 
-    coin = db[coin_ticker]
     ctime = datetime.now().timestamp()
     
     if (update.message.date.timestamp() + 10 < ctime):
