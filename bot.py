@@ -41,7 +41,12 @@ def priceall(bot, update):
 
 def kryptono(bot, update):
     result = ws.recv()
-    logger.info("Received '%s'" % result)
+    #logger.info("Received '%s'" % result)
+    data = json.loads(result)
+    for ticker in data["d"]:
+        if ticker["s"] == "TRX_KNOW":
+            logger.info(ticker)
+            break
 
 def price(bot, update):
 
