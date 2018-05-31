@@ -26,6 +26,10 @@ xem_btc = 0
 xem_usd = 0
 cmc_ts = 0
 
+nemchange_tickers = {
+    "CVZ": "coinvest:vezcoin"
+}
+
 # Define a few command handlers. These usually take the two arguments bot and
 # update. Error handlers also receive the raised TelegramError object in error.
 def priceall(bot, update):
@@ -76,7 +80,7 @@ def nemchange(bot, update, ticker):
 
     logger.info("Pulling data on '{:s}'".format(ticker))
  
-    body = requests.get("https://nemchange.com//Exchange/actualOrders2/" + ticker + "/nem:xem")
+    body = requests.get("https://nemchange.com//Exchange/actualOrders2/" + nemchange_tickers[ticker] + "/nem:xem")
     if (body.text == "{}"):
         logger.warn("Empty response")
         return
