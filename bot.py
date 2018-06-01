@@ -91,7 +91,6 @@ def scraper(bot, job):
         if ticker["s"] == "XPX_BTC":
             xpx_btc = float(ticker["n"])
             xpx_btc_q = float(ticker["q"])
-            #logger.info("%f %f" % (xpx_btc * 100000000, xpx_btc * btc_usd)) 
         elif ticker["s"] == "XPX_ETH":
             xpx_eth = float(ticker["n"])
             xpx_eth_q = float(ticker["q"])
@@ -100,7 +99,6 @@ def scraper(bot, job):
             xpx_know_q = float(ticker["q"])
         elif ticker["s"] == "KNOW_USDT":
             know_usdt = float(ticker["n"])
-            #logger.info("%f %f" % (xpx_btc * 100000000, xpx_btc * btc_usd)) 
         #endif
     #endfor
 
