@@ -47,7 +47,7 @@ def priceall(bot, update):
 #enddef 
 
 def pricexpx(bot, update):
-    xpx_usd = xpx_eth * eth_usd
+    xpx_usd = (xpx_eth * eth_usd + xpx_btc * btc_usd) / 2
     update.message.chat.send_message("1 {:s} = ${:.5f} = {:d} sat = {:.4f} XEM".format("XPX", xpx_usd, int(xpx_usd / btc_usd * 100000000), xpx_usd / xem_usd))
 
 def scraper(bot, job):
