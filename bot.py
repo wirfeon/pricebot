@@ -26,6 +26,8 @@ xem_btc = 0
 xpx_eth = 0
 xem_usd = 0
 cmc_ts = 0
+eth_btc = 0
+eth_usd = 0
 
 nemchange_tickers = {
     "CVZ": "coinvest:vezcoin"
@@ -49,7 +51,7 @@ def pricexpx(bot, update):
     update.message.chat.send_message("1 {:s} = ${:.5f} = {:d} sat = {:.4f} XEM".format("XPX", xpx_usd, int(xpx_usd / btc_usd * 100000000), xpx_usd / xem_usd))
 
 def scraper(bot, job):
-    global btc_usd, xpx_btc, xem_btc, xem_usd, cmc_ts, eth_btc, eth_usd
+    global btc_usd, xpx_btc, xem_btc, xem_usd, cmc_ts, eth_btc, eth_usd, xpx_eth
 
     while 1:
         result = ws.recv()
