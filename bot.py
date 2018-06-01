@@ -40,8 +40,6 @@ nemchange_tickers = {
     "CVZ": "coinvest:vezcoin"
 }
 
-# Define a few command handlers. These usually take the two arguments bot and
-# update. Error handlers also receive the raised TelegramError object in error.
 def priceall(bot, update):
     chat_title = update.message.chat.title
     
