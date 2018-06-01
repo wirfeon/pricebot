@@ -30,6 +30,8 @@ xem_usd = 0
 cmc_ts = 0
 eth_btc = 0
 eth_usd = 0
+xpx_eth_q = 0
+xpx_btc_q = 0
 
 nemchange_tickers = {
     "CVZ": "coinvest:vezcoin"
@@ -51,9 +53,11 @@ def priceall(bot, update):
 def pricexpx(bot, update):
     xpx_usd = xpx_eth * eth_usd
     update.message.chat.send_message("1 {:s} = ${:.5f} = {:d} sat = {:.4f} XEM".format("XPX", xpx_usd, int(xpx_usd / btc_usd * 100000000), xpx_usd / xem_usd))
+    total = xpx_eth_q * eth_usd + xpx_btc_q * btc_usd
+    logger.info("ETH %.2f BTC %.2f" % (xpx_eth_q * eth_usd / total, xpx_btc_q * btc_usd / total))
 
 def scraper(bot, job):
-    global btc_usd, xpx_btc, xem_btc, xem_usd, cmc_ts, eth_btc, eth_usd, xpx_eth
+    global btc_usd, xpx_btc, xem_btc, xem_usd, cmc_ts, eth_btc, eth_usd, xpx_eth, xpx_eth_q, xpx_btc_q
 
     while 1:
         result = ws.recv()
@@ -79,9 +83,11 @@ def scraper(bot, job):
     for ticker in data["d"]:
         if ticker["s"] == "XPX_BTC":
             xpx_btc = float(ticker["n"])
+            xpx_btc_q = float(ticker["q"])
             #logger.info("%f %f" % (xpx_btc * 100000000, xpx_btc * btc_usd)) 
         elif ticker["s"] == "XPX_ETH":
             xpx_eth = float(ticker["n"])
+            xpx_eth_q = float(ticker["q"])
             #logger.info("%f %f" % (xpx_btc * 100000000, xpx_btc * btc_usd)) 
         #endif
     #endfor
