@@ -125,7 +125,6 @@ def nemchange(bot, update, ticker):
     bid = 1 / ratio
     #coin["xem"] = float(json.loads(requests.get('https://api.coinmarketcap.com/v1/ticker/nem/').text)[0]["price_usd"])
         
-    #logger.info("Rresponding to %u '%s'" % (update.message.chat.id, update.message.chat.title))
     update.message.chat.send_message("1 {:s} = {:.4f} XEM = ${:.5f}".format(ticker, bid, bid * xem_usd))
 
 def price(bot, update):
