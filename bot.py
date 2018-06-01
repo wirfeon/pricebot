@@ -52,14 +52,20 @@ def priceall(bot, update):
 #enddef 
 
 def pricexpx(bot, update):
-    total = xpx_eth_q * eth_usd + xpx_btc_q * btc_usd + xpx_know * know_usdt
-    eth_share = xpx_eth_q * eth_usd / total
-    btc_share = xpx_btc_q * btc_usd / total
-    know_share = xpx_know_q * know_usdt / total
+    global btc_usd, xpx_btc, xem_btc, xem_usd, cmc_ts, eth_btc, eth_usd, xpx_eth, xpx_eth_q, xpx_btc_q, xpx_know, xpx_know_q, know_usdt
+    
+    eth_v = xpx_eth_q * eth_usd
+    btc_v = xpx_btc_q * btc_usd
+    know_v = xpx_know_q * know_usdt
+    total = eth_v + btc_v + know_v
+
+    know_share = know_v / total
+    eth_share = eth_v / total
+    btc_share = btc_v / total
 
     xpx_usd = xpx_eth * eth_usd * eth_share + xpx_btc * btc_usd * btc_share + xpx_know * know_usdt * know_share
     update.message.chat.send_message("1 {:s} = ${:.5f} = {:d} sat = {:.4f} XEM".format("XPX", xpx_usd, int(xpx_usd / btc_usd * 100000000), xpx_usd / xem_usd))
-    logger.info("ETH %.2f BTC %.2f" % (xpx_eth_q * eth_usd / total, xpx_btc_q * btc_usd / total))
+    logger.info("ETH %.2f BTC %.2f KNOW %.2f" % (eth_share, btc_share, know_share))
 
 def scraper(bot, job):
     global btc_usd, xpx_btc, xem_btc, xem_usd, cmc_ts, eth_btc, eth_usd, xpx_eth, xpx_eth_q, xpx_btc_q, xpx_know, xpx_know_q, know_usdt
@@ -89,7 +95,6 @@ def scraper(bot, job):
         if ticker["s"] == "XPX_BTC":
             xpx_btc = float(ticker["n"])
             xpx_btc_q = float(ticker["q"])
-            #logger.info("%f %f" % (xpx_btc * 100000000, xpx_btc * btc_usd)) 
         elif ticker["s"] == "XPX_ETH":
             xpx_eth = float(ticker["n"])
             xpx_eth_q = float(ticker["q"])
@@ -98,7 +103,6 @@ def scraper(bot, job):
             xpx_know_q = float(ticker["q"])
         elif ticker["s"] == "KNOW_USDT":
             know_usdt = float(ticker["n"])
-            #logger.info("%f %f" % (xpx_btc * 100000000, xpx_btc * btc_usd)) 
         #endif
     #endfor
 
@@ -170,7 +174,7 @@ def main():
             "Host: engines.kryptono.exchange", 
             "Origin: https://kryptono.exchange", 
             "Sec-WebSocket-Extensions: permessage-deflate; client_max_window_bits", 
-            "Sec-WebSocket-Key: lctUilo7TifaqRxgS4hs0Q==", 
+            "Sec-WebSocket-Key: %s" % os.environ["WS_TOKEN"], 
             "Sec-WebSocket-Version: 13"])
 
     logger.info("Receiving...")
