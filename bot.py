@@ -24,8 +24,11 @@ ws = websocket.WebSocket()
 btc_usd = 0
 xpx_btc = 0
 xem_btc = 0
+xpx_eth = 0
 xem_usd = 0
 cmc_ts = 0
+eth_btc = 0
+eth_usd = 0
 
 nemchange_tickers = {
     "CVZ": "coinvest:vezcoin"
@@ -45,10 +48,11 @@ def priceall(bot, update):
 #enddef 
 
 def pricexpx(bot, update):
-    update.message.chat.send_message("1 {:s} = ${:.5f} = {:d} sat = {:.4f} XEM".format("XPX", xpx_btc * btc_usd, int(xpx_btc * 100000000), xpx_btc / xem_btc))
+    xpx_usd = (xpx_eth * eth_usd + xpx_btc * btc_usd) / 2
+    update.message.chat.send_message("1 {:s} = ${:.5f} = {:d} sat = {:.4f} XEM".format("XPX", xpx_usd, int(xpx_usd / btc_usd * 100000000), xpx_usd / xem_usd))
 
 def scraper(bot, job):
-    global btc_usd, xpx_btc, xem_btc, xem_usd, cmc_ts
+    global btc_usd, xpx_btc, xem_btc, xem_usd, cmc_ts, eth_btc, eth_usd, xpx_eth
 
     while 1:
         result = ws.recv()
@@ -64,6 +68,10 @@ def scraper(bot, job):
         xem_btc = float(xx["price_btc"])
         xem_usd = float(xx["price_usd"])
         
+        xx = json.loads(requests.get('https://api.coinmarketcap.com/v1/ticker/ethereum/').text)[0]
+        eth_btc = float(xx["price_btc"])
+        eth_usd = float(xx["price_usd"])
+        
         cmc_ts = int(data["t"])
     #endif
 
@@ -71,7 +79,9 @@ def scraper(bot, job):
         if ticker["s"] == "XPX_BTC":
             xpx_btc = float(ticker["n"])
             #logger.info("%f %f" % (xpx_btc * 100000000, xpx_btc * btc_usd)) 
-            break
+        elif ticker["s"] == "XPX_ETH":
+            xpx_eth = float(ticker["n"])
+            #logger.info("%f %f" % (xpx_btc * 100000000, xpx_btc * btc_usd)) 
         #endif
     #endfor
 
@@ -143,7 +153,7 @@ def main():
             "Host: engines.kryptono.exchange", 
             "Origin: https://kryptono.exchange", 
             "Sec-WebSocket-Extensions: permessage-deflate; client_max_window_bits", 
-            "Sec-WebSocket-Key: lctUilr7TifuqRxnS4hs0Q==", 
+            "Sec-WebSocket-Key: lctUilo7TifaqRxgS4hs0Q==", 
             "Sec-WebSocket-Version: 13"])
 
     logger.info("Receiving...")
