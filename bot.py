@@ -54,6 +54,8 @@ def priceall(bot, update):
 #enddef 
 
 def pricexpx(bot, update):
+    global btc_usd, xpx_btc, xem_btc, xem_usd, cmc_ts, eth_btc, eth_usd, xpx_eth, xpx_eth_q, xpx_btc_q, xpx_know, xpx_know_q, know_usdt
+    
     total = xpx_eth_q * eth_usd + xpx_btc_q * btc_usd + xpx_know * know_usdt
     eth_share = xpx_eth_q * eth_usd / total
     btc_share = xpx_btc_q * btc_usd / total
