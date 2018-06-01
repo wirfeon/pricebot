@@ -32,6 +32,9 @@ eth_btc = 0
 eth_usd = 0
 xpx_eth_q = 0
 xpx_btc_q = 0
+xpx_know = 0
+xpx_know_q = 0
+know_usdt = 0
 
 nemchange_tickers = {
     "CVZ": "coinvest:vezcoin"
@@ -51,16 +54,17 @@ def priceall(bot, update):
 #enddef 
 
 def pricexpx(bot, update):
-    total = xpx_eth_q * eth_usd + xpx_btc_q * btc_usd
+    total = xpx_eth_q * eth_usd + xpx_btc_q * btc_usd + xpx_know * know_usdt
     eth_share = xpx_eth_q * eth_usd / total
     btc_share = xpx_btc_q * btc_usd / total
+    know_share = xpx_know_q * know_usdt / total
 
-    xpx_usd = xpx_eth * eth_usd * eth_share + xpx_btc * btc_usd * btc_share
+    xpx_usd = xpx_eth * eth_usd * eth_share + xpx_btc * btc_usd * btc_share + xpx_know * know_usdt * know_share
     update.message.chat.send_message("1 {:s} = ${:.5f} = {:d} sat = {:.4f} XEM".format("XPX", xpx_usd, int(xpx_usd / btc_usd * 100000000), xpx_usd / xem_usd))
     logger.info("ETH %.2f BTC %.2f" % (xpx_eth_q * eth_usd / total, xpx_btc_q * btc_usd / total))
 
 def scraper(bot, job):
-    global btc_usd, xpx_btc, xem_btc, xem_usd, cmc_ts, eth_btc, eth_usd, xpx_eth, xpx_eth_q, xpx_btc_q
+    global btc_usd, xpx_btc, xem_btc, xem_usd, cmc_ts, eth_btc, eth_usd, xpx_eth, xpx_eth_q, xpx_btc_q, xpx_know, xpx_know_q, know_usdt
 
     while 1:
         result = ws.recv()
@@ -91,6 +95,11 @@ def scraper(bot, job):
         elif ticker["s"] == "XPX_ETH":
             xpx_eth = float(ticker["n"])
             xpx_eth_q = float(ticker["q"])
+        elif ticker["s"] == "XPX_KNOW":
+            xpx_know = float(ticker["n"])
+            xpx_know_q = float(ticker["q"])
+        elif ticker["s"] == "KNOW_USDT":
+            know_usdt = float(ticker["n"])
             #logger.info("%f %f" % (xpx_btc * 100000000, xpx_btc * btc_usd)) 
         #endif
     #endfor
