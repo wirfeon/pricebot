@@ -170,7 +170,7 @@ def main():
             "Host: engines.kryptono.exchange", 
             "Origin: https://kryptono.exchange", 
             "Sec-WebSocket-Extensions: permessage-deflate; client_max_window_bits", 
-            "Sec-WebSocket-Key: lctUilo7TifaqRxgS4hs0Q==", 
+            "Sec-WebSocket-Key: %s" % os.environ["WS_TOKEN"], 
             "Sec-WebSocket-Version: 13"])
 
     logger.info("Receiving...")
