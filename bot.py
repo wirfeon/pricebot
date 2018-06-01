@@ -61,7 +61,7 @@ def pricexpx(bot, update):
 
     xpx_usd = xpx_eth * eth_usd * eth_share + xpx_btc * btc_usd * btc_share + xpx_know * know_usdt * know_share
     update.message.chat.send_message("1 {:s} = ${:.5f} = {:d} sat = {:.4f} XEM".format("XPX", xpx_usd, int(xpx_usd / btc_usd * 100000000), xpx_usd / xem_usd))
-    logger.info("ETH %.2f BTC %.2f" % (xpx_eth_q * eth_usd / total, xpx_btc_q * btc_usd / total))
+    logger.info("ETH %.2f BTC %.2f KNOW %.2f" % (xpx_eth_q * eth_usd / total, xpx_btc_q * btc_usd / total, xpx_know_q * know_usdt / total))
 
 def scraper(bot, job):
     global btc_usd, xpx_btc, xem_btc, xem_usd, cmc_ts, eth_btc, eth_usd, xpx_eth, xpx_eth_q, xpx_btc_q, xpx_know, xpx_know_q, know_usdt
