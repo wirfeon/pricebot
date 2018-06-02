@@ -70,6 +70,7 @@ def pricexpx(bot, update):
 
 def scraper(bot, job):
     global btc_usd, xpx_btc, xem_btc, xem_usd, cmc_ts, eth_btc, eth_usd, xpx_eth, xpx_eth_q, xpx_btc_q, xpx_know, xpx_know_q, know_usdt
+    global ws
 
     while 1:
         result = {}
@@ -81,6 +82,10 @@ def scraper(bot, job):
                 break
             except Exception:
                 logger.warn("Reconnecting ws")
+    
+                ws.shutdown()
+                ws.close() 
+                ws = websocket.WebSocket()
 
                 ws.connect("wss://engines.kryptono.exchange/ws/v1/tk/", 
                     headers = ["Connection: Upgrade", 
@@ -90,6 +95,7 @@ def scraper(bot, job):
                         "Sec-WebSocket-Extensions: permessage-deflate; client_max_window_bits", 
                         "Sec-WebSocket-Key: %s==" % base64.b64encode(bytes(datetime.now().isoformat(), 'utf-8')), 
                         "Sec-WebSocket-Version: 13"])
+                ws.recv()
             #endtry
 
             i += 1
@@ -180,7 +186,8 @@ def error(bot, update, error):
     logger.warning('Update "%s" caused error "%s"', update, error)
 
 def main():
-    
+    global ws
+
     i = 0
     while i < 2:
         try:
@@ -189,6 +196,15 @@ def main():
 
             updater.start_webhook(listen="0.0.0.0", port=PORT, url_path=os.environ["BOT_TOKEN"])
             updater.bot.set_webhook(os.environ["WEB_HOOK"] + os.environ["BOT_TOKEN"])
+            break
+        except Exception as e:
+            logger.warn("Exception: %s" % e)
+            updater.stop()
+        #endtry
+        
+        i += 1
+        time.sleep(1)
+    #endwhile
 
             # Get the dispatcher to register handlers
             dp = updater.dispatcher
@@ -197,6 +213,9 @@ def main():
             dp.add_handler(CommandHandler("price", price))
             dp.add_handler(CommandHandler("priceall", priceall))
 
+    i = 0
+    while i < 2:
+        try:
             ws.connect("wss://engines.kryptono.exchange/ws/v1/tk/", 
                 headers = ["Connection: Upgrade", 
                     "Upgrade: websocket", 
@@ -205,30 +224,31 @@ def main():
                     "Sec-WebSocket-Extensions: permessage-deflate; client_max_window_bits", 
                     "Sec-WebSocket-Key: %s" % base64.b64encode(bytes(datetime.now().isoformat(), 'utf-8')), 
                     "Sec-WebSocket-Version: 13"])
-
+    
             logger.info("Receiving...")
             result = ws.recv()
             logger.info("Received '%s'" % result)
-
-            job = updater.job_queue
-            job_sec = job.run_repeating(scraper, interval=3, first=0)
-
-            # log all errors
-            dp.add_error_handler(error)
-
-            # Start the Bot
-            updater.start_polling()
+            break
         except Exception as e:
             logger.warn("Exception: %s" % e)
-            updater.stop()
             ws.shutdown()
             ws.close() 
+            ws = websocket.WebSocket()
         #endtry
-    
+        
         i += 1
         time.sleep(1)
     #endwhile
-         
+
+    job = updater.job_queue
+    job_sec = job.run_repeating(scraper, interval=3, first=0)
+
+    # log all errors
+    dp.add_error_handler(error)
+
+    # Start the Bot
+    updater.start_polling()
+    
     # Run the bot until you press Ctrl-C or the process receives SIGINT,
     # SIGTERM or SIGABRT. This should be used most of the time, since
     # start_polling() is non-blocking and will stop the bot gracefully.
