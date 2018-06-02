@@ -9,7 +9,7 @@ import websocket
 from copy import copy
 from telegram.ext import Updater, CommandHandler, MessageHandler, Filters
 from datetime import datetime
-
+import base64
 
 PORT = int(os.environ.get('PORT', '8443'))
 
@@ -71,7 +71,19 @@ def scraper(bot, job):
     global btc_usd, xpx_btc, xem_btc, xem_usd, cmc_ts, eth_btc, eth_usd, xpx_eth, xpx_eth_q, xpx_btc_q, xpx_know, xpx_know_q, know_usdt
 
     while 1:
-        result = ws.recv()
+        try:
+            result = ws.recv()
+        except Exception:
+            ws.connect("wss://engines.kryptono.exchange/ws/v1/tk/", 
+                headers = ["Connection: Upgrade", 
+                    "Upgrade: websocket", 
+                    "Host: engines.kryptono.exchange", 
+                    "Origin: https://kryptono.exchange", 
+                    "Sec-WebSocket-Extensions: permessage-deflate; client_max_window_bits", 
+                    "Sec-WebSocket-Key: %s==" % base64.encode(bytes(datetime.now().isoformat(), 'utf-8')), 
+                    "Sec-WebSocket-Version: 13"])
+        #endtry
+
         data = json.loads(result)
         diff = datetime.now().timestamp() * 1000 - int(data["t"])
         logger.info("Scraping %.2f" % (datetime.now().timestamp() * 1000 - int(data["t"])))
@@ -173,7 +185,7 @@ def main():
             "Host: engines.kryptono.exchange", 
             "Origin: https://kryptono.exchange", 
             "Sec-WebSocket-Extensions: permessage-deflate; client_max_window_bits", 
-            "Sec-WebSocket-Key: %s" % os.environ["WS_TOKEN"], 
+            "Sec-WebSocket-Key: %s" % base64.encode(bytes(datetime.now().isoformat(), 'utf-8')), 
             "Sec-WebSocket-Version: 13"])
 
     logger.info("Receiving...")
