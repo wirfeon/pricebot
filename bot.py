@@ -80,6 +80,8 @@ def scraper(bot, job):
                 result = ws.recv()
                 break
             except Exception:
+                logger.warn("Reconnecting ws")
+
                 ws.connect("wss://engines.kryptono.exchange/ws/v1/tk/", 
                     headers = ["Connection: Upgrade", 
                         "Upgrade: websocket", 
