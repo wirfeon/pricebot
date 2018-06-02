@@ -209,7 +209,6 @@ def main():
     # Get the dispatcher to register handlers
     dp = updater.dispatcher
 
-    # on different commands - answer in Telegram
     dp.add_handler(CommandHandler("price", price))
     dp.add_handler(CommandHandler("priceall", priceall))
 
