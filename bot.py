@@ -169,7 +169,6 @@ def main():
     """Start the bot."""
     i = 0
     while i < 2:
-            try:
                     # Create the EventHandler and pass it your bot's token.
                     updater = Updater(os.environ["BOT_TOKEN"], workers = 1)
 
@@ -189,7 +188,7 @@ def main():
                             "Host: engines.kryptono.exchange", 
                             "Origin: https://kryptono.exchange", 
                             "Sec-WebSocket-Extensions: permessage-deflate; client_max_window_bits", 
-                            "Sec-WebSocket-Key: %s" % base64.encode(bytes(datetime.now().isoformat(), 'utf-8')), 
+                            "Sec-WebSocket-Key: %s==" % base64.encode(bytes(datetime.now().isoformat(), 'utf-8')), 
                             "Sec-WebSocket-Version: 13"])
 
                     logger.info("Receiving...")
@@ -209,12 +208,9 @@ def main():
                     # SIGTERM or SIGABRT. This should be used most of the time, since
                     # start_polling() is non-blocking and will stop the bot gracefully.
                     updater.idle()
-            except Exception as e:
-                logger.warn("Exception: %s" % e)
-            #endtry
             
-            i += 1
-            time.sleep(1)
+                    i += 1
+                    time.sleep(1)
     #endwhile
 
     logger.info("Stoping updater") 
