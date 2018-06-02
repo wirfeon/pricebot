@@ -206,12 +206,12 @@ def main():
         time.sleep(1)
     #endwhile
 
-            # Get the dispatcher to register handlers
-            dp = updater.dispatcher
+    # Get the dispatcher to register handlers
+    dp = updater.dispatcher
 
-            # on different commands - answer in Telegram
-            dp.add_handler(CommandHandler("price", price))
-            dp.add_handler(CommandHandler("priceall", priceall))
+    # on different commands - answer in Telegram
+    dp.add_handler(CommandHandler("price", price))
+    dp.add_handler(CommandHandler("priceall", priceall))
 
     i = 0
     while i < 2:
