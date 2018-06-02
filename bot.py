@@ -167,7 +167,7 @@ def price(bot, update):
 
     ctime = datetime.now().timestamp()
     
-    if (update.message.date.timestamp() + 10 < ctime):
+    if (update.message.date.timestamp() + 20 < ctime):
         logger.warn("Request is too old %f %f" % (update.message.date.timestamp(), ctime))
         return
     #endif
