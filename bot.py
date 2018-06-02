@@ -10,6 +10,7 @@ from copy import copy
 from telegram.ext import Updater, CommandHandler, MessageHandler, Filters
 from datetime import datetime
 import base64
+import time
 
 PORT = int(os.environ.get('PORT', '8443'))
 
@@ -166,46 +167,55 @@ def error(bot, update, error):
 
 def main():
     """Start the bot."""
-    # Create the EventHandler and pass it your bot's token.
-    updater = Updater(os.environ["BOT_TOKEN"], workers = 1)
+    i = 0
+    while i < 2:
+            try:
+                    # Create the EventHandler and pass it your bot's token.
+                    updater = Updater(os.environ["BOT_TOKEN"], workers = 1)
 
-    updater.start_webhook(listen="0.0.0.0", port=PORT, url_path=os.environ["BOT_TOKEN"])
-    updater.bot.set_webhook(os.environ["WEB_HOOK"] + os.environ["BOT_TOKEN"])
+                    updater.start_webhook(listen="0.0.0.0", port=PORT, url_path=os.environ["BOT_TOKEN"])
+                    updater.bot.set_webhook(os.environ["WEB_HOOK"] + os.environ["BOT_TOKEN"])
 
-    # Get the dispatcher to register handlers
-    dp = updater.dispatcher
+                    # Get the dispatcher to register handlers
+                    dp = updater.dispatcher
 
-    # on different commands - answer in Telegram
-    dp.add_handler(CommandHandler("price", price))
-    dp.add_handler(CommandHandler("priceall", priceall))
+                    # on different commands - answer in Telegram
+                    dp.add_handler(CommandHandler("price", price))
+                    dp.add_handler(CommandHandler("priceall", priceall))
 
-    ws.connect("wss://engines.kryptono.exchange/ws/v1/tk/", 
-        headers = ["Connection: Upgrade", 
-            "Upgrade: websocket", 
-            "Host: engines.kryptono.exchange", 
-            "Origin: https://kryptono.exchange", 
-            "Sec-WebSocket-Extensions: permessage-deflate; client_max_window_bits", 
-            "Sec-WebSocket-Key: %s" % base64.encode(bytes(datetime.now().isoformat(), 'utf-8')), 
-            "Sec-WebSocket-Version: 13"])
+                    ws.connect("wss://engines.kryptono.exchange/ws/v1/tk/", 
+                        headers = ["Connection: Upgrade", 
+                            "Upgrade: websocket", 
+                            "Host: engines.kryptono.exchange", 
+                            "Origin: https://kryptono.exchange", 
+                            "Sec-WebSocket-Extensions: permessage-deflate; client_max_window_bits", 
+                            "Sec-WebSocket-Key: %s" % base64.encode(bytes(datetime.now().isoformat(), 'utf-8')), 
+                            "Sec-WebSocket-Version: 13"])
 
-    logger.info("Receiving...")
-    result = ws.recv()
-    logger.info("Received '%s'" % result)
+                    logger.info("Receiving...")
+                    result = ws.recv()
+                    logger.info("Received '%s'" % result)
 
-    job = updater.job_queue
-    job_sec = job.run_repeating(scraper, interval=3, first=0)
+                    job = updater.job_queue
+                    job_sec = job.run_repeating(scraper, interval=3, first=0)
 
-    # log all errors
-    dp.add_error_handler(error)
+                    # log all errors
+                    dp.add_error_handler(error)
 
-    # Start the Bot
-    updater.start_polling()
- 
-    # Run the bot until you press Ctrl-C or the process receives SIGINT,
-    # SIGTERM or SIGABRT. This should be used most of the time, since
-    # start_polling() is non-blocking and will stop the bot gracefully.
-    updater.idle()
-  
+                    # Start the Bot
+                    updater.start_polling()
+                 
+                    # Run the bot until you press Ctrl-C or the process receives SIGINT,
+                    # SIGTERM or SIGABRT. This should be used most of the time, since
+                    # start_polling() is non-blocking and will stop the bot gracefully.
+                    updater.idle()
+            except Exception as e:
+                logger.warn("Exception: %s" % e)
+            #endtry
+        i += 1
+        time.sleep(1)
+    #endwhile
+
     logger.info("Stoping updater") 
     updater.stop()
  
