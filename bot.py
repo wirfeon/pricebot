@@ -212,8 +212,9 @@ def main():
             except Exception as e:
                 logger.warn("Exception: %s" % e)
             #endtry
-        i += 1
-        time.sleep(1)
+            
+            i += 1
+            time.sleep(1)
     #endwhile
 
     logger.info("Stoping updater") 
