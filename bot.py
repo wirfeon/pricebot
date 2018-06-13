@@ -85,7 +85,7 @@ def price(bot, update):
 
     ctime = datetime.now().timestamp()
     
-    if (update.message.date.timestamp() + 10 < ctime):
+    if (update.message.date.timestamp() + 30 < ctime):
         logger.warn("Request is too old %f %f" % (update.message.date.timestamp(), ctime))
         return
     #endif
@@ -131,7 +131,6 @@ def main():
     # Get the dispatcher to register handlers
     dp = updater.dispatcher
 
-    # on different commands - answer in Telegram
     dp.add_handler(CommandHandler("price", price))
     dp.add_handler(CommandHandler("priceall", priceall))
 
