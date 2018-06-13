@@ -44,7 +44,7 @@ def pricexpx(bot, update):
 
 def coingecko(coin):
     response = requests.get("https://api.coingecko.com/api/v3/coins/" + coin).text
-    data = json.load(response)
+    data = json.loads(response)
 
     return float(data["market_data"]["current_price"]["usd"])
     
