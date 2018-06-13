@@ -55,7 +55,7 @@ def scraper(bot, job):
     xpx_usd = coingecko("proximax")
     xem_usd = coingecko("nem")
     btc_usd = coingecko("bitcoin")
-    loger.info("Done")
+    logger.info("Done")
 
     
 def nemchange(bot, update, ticker):
