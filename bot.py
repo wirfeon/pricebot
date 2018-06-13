@@ -5,7 +5,6 @@ import logging
 import requests
 import json
 import os
-import websocket
 from copy import copy
 from telegram.ext import Updater, CommandHandler, MessageHandler, Filters
 from datetime import datetime
@@ -19,23 +18,9 @@ logging.basicConfig(format='%(asctime)s - %(name)s - %(levelname)s - %(message)s
 
 logger = logging.getLogger(__name__)
 
-
-websocket.enableTrace(True)
-ws = websocket.WebSocket()
-
 btc_usd = 0
-xpx_btc = 0
-xem_btc = 0
-xpx_eth = 0
 xem_usd = 0
-cmc_ts = 0
-eth_btc = 0
-eth_usd = 0
-xpx_eth_q = 0
-xpx_btc_q = 0
-xpx_know = 0
-xpx_know_q = 0
-know_usdt = 0
+xpx_usd = 0
 
 nemchange_tickers = {
     "CVZ": "coinvest:vezcoin"
@@ -53,92 +38,24 @@ def priceall(bot, update):
 #enddef 
 
 def pricexpx(bot, update):
-    global btc_usd, xpx_btc, xem_btc, xem_usd, cmc_ts, eth_btc, eth_usd, xpx_eth, xpx_eth_q, xpx_btc_q, xpx_know, xpx_know_q, know_usdt
-    
-    eth_v = xpx_eth_q * eth_usd
-    btc_v = xpx_btc_q * btc_usd
-    know_v = xpx_know_q * know_usdt
-    total = eth_v + btc_v + know_v
-
-    know_share = know_v / total
-    eth_share = eth_v / total
-    btc_share = btc_v / total
-
-    xpx_usd = xpx_eth * eth_usd * eth_share + xpx_btc * btc_usd * btc_share + xpx_know * know_usdt * know_share
+    global xpx_usd, xem_usd, btc_usd
+ 
     update.message.chat.send_message("1 {:s} = ${:.5f} = {:d} sat = {:.4f} XEM".format("XPX", xpx_usd, int(xpx_usd / btc_usd * 100000000), xpx_usd / xem_usd))
-    logger.info("ETH %.2f BTC %.2f KNOW %.2f" % (eth_share, btc_share, know_share))
 
-def scraper(bot, job):
-    global btc_usd, xpx_btc, xem_btc, xem_usd, cmc_ts, eth_btc, eth_usd, xpx_eth, xpx_eth_q, xpx_btc_q, xpx_know, xpx_know_q, know_usdt
-    global ws
+def coingecko(coin):
+    response = requests.get("https://api.coingecko.com/api/v3/coins/" + coin).text
+    data = json.load(response)
 
-    while 1:
-        result = {}
-        i = 0
-
-        while i < 3:
-            try:
-                result = ws.recv()
-                break
-            except Exception:
-                logger.warn("Reconnecting ws")
+    return float(data["market_data"]["current_price"]["usd"])
     
-                ws.shutdown()
-                ws.close() 
-                ws = websocket.WebSocket()
+def scraper(bot, job):
+    global xpx_usd, xem_usd, btc_usd
 
-                ws.connect("wss://engines.kryptono.exchange/ws/v1/tk/", 
-                    headers = ["Connection: Upgrade", 
-                        "Upgrade: websocket", 
-                        "Host: engines.kryptono.exchange", 
-                        "Origin: https://kryptono.exchange", 
-                        "Sec-WebSocket-Extensions: permessage-deflate; client_max_window_bits", 
-                        "Sec-WebSocket-Key: %s==" % base64.b64encode(bytes(datetime.now().isoformat(), 'utf-8')), 
-                        "Sec-WebSocket-Version: 13"])
-                ws.recv()
-            #endtry
+    xpx_usd = coingecko("proximax")
+    xem_usd = coingecko("nem")
+    btc_usd = coingecko("bitcoin")
 
-            i += 1
-        #endwhile
-
-        if (result == {}):
-            return
-
-        data = json.loads(result)
-        diff = datetime.now().timestamp() * 1000 - int(data["t"])
-        logger.info("Scraping %.2f" % (datetime.now().timestamp() * 1000 - int(data["t"])))
-        if (diff < 3000): break
-    #endwhile
-
-    if int(data["t"]) - cmc_ts > 10000:
-        btc_usd = float(json.loads(requests.get('https://api.coinmarketcap.com/v1/ticker/bitcoin/').text)[0]["price_usd"])
-        
-        xx = json.loads(requests.get('https://api.coinmarketcap.com/v1/ticker/nem/').text)[0]
-        xem_btc = float(xx["price_btc"])
-        xem_usd = float(xx["price_usd"])
-        
-        xx = json.loads(requests.get('https://api.coinmarketcap.com/v1/ticker/ethereum/').text)[0]
-        eth_btc = float(xx["price_btc"])
-        eth_usd = float(xx["price_usd"])
-        
-        cmc_ts = int(data["t"])
-    #endif
-
-    for ticker in data["d"]:
-        if ticker["s"] == "XPX_BTC":
-            xpx_btc = float(ticker["n"])
-            xpx_btc_q = float(ticker["q"])
-        elif ticker["s"] == "XPX_ETH":
-            xpx_eth = float(ticker["n"])
-            xpx_eth_q = float(ticker["q"])
-        elif ticker["s"] == "XPX_KNOW":
-            xpx_know = float(ticker["n"])
-            xpx_know_q = float(ticker["q"])
-        elif ticker["s"] == "KNOW_USDT":
-            know_usdt = float(ticker["n"])
-        #endif
-    #endfor
-
+    
 def nemchange(bot, update, ticker):
     global xem_usd
 
@@ -156,7 +73,6 @@ def nemchange(bot, update, ticker):
     ratio = float(body.text[start + len(token) : end])
 
     bid = 1 / ratio
-    #coin["xem"] = float(json.loads(requests.get('https://api.coinmarketcap.com/v1/ticker/nem/').text)[0]["price_usd"])
         
     update.message.chat.send_message("1 {:s} = {:.4f} XEM = ${:.5f}".format(ticker, bid, bid * xem_usd))
 
@@ -186,7 +102,7 @@ def error(bot, update, error):
     logger.warning('Update "%s" caused error "%s"', update, error)
 
 def main():
-    global ws
+    updater = None
 
     i = 0
     while i < 2:
@@ -199,12 +115,16 @@ def main():
             break
         except Exception as e:
             logger.warn("Exception: %s" % e)
-            updater.stop()
+            if (updater):
+                updater.stop()
         #endtry
         
         i += 1
         time.sleep(1)
     #endwhile
+
+    if (not updater):
+        return
 
     # Get the dispatcher to register handlers
     dp = updater.dispatcher
@@ -213,35 +133,8 @@ def main():
     dp.add_handler(CommandHandler("price", price))
     dp.add_handler(CommandHandler("priceall", priceall))
 
-    i = 0
-    while i < 2:
-        try:
-            ws.connect("wss://engines.kryptono.exchange/ws/v1/tk/", 
-                headers = ["Connection: Upgrade", 
-                    "Upgrade: websocket", 
-                    "Host: engines.kryptono.exchange", 
-                    "Origin: https://kryptono.exchange", 
-                    "Sec-WebSocket-Extensions: permessage-deflate; client_max_window_bits", 
-                    "Sec-WebSocket-Key: %s" % base64.b64encode(bytes(datetime.now().isoformat(), 'utf-8')), 
-                    "Sec-WebSocket-Version: 13"])
-    
-            logger.info("Receiving...")
-            result = ws.recv()
-            logger.info("Received '%s'" % result)
-            break
-        except Exception as e:
-            logger.warn("Exception: %s" % e)
-            ws.shutdown()
-            ws.close() 
-            ws = websocket.WebSocket()
-        #endtry
-        
-        i += 1
-        time.sleep(1)
-    #endwhile
-
     job = updater.job_queue
-    job_sec = job.run_repeating(scraper, interval=3, first=0)
+    job_sec = job.run_repeating(scraper, interval=10, first=0)
 
     # log all errors
     dp.add_error_handler(error)
@@ -258,8 +151,5 @@ def main():
     logger.info("Stoping updater") 
     updater.stop()
  
-    ws.shutdown()
-    ws.close() 
-
 if __name__ == '__main__':
     main()
