@@ -18,6 +18,13 @@ logging.basicConfig(format='%(asctime)s - %(name)s - %(levelname)s - %(message)s
 
 logger = logging.getLogger(__name__)
 
+_port = int(os.environ["PORT"])
+_webhook = os.environ["WEB_HOOK"]
+_token = os.environ["BOT_TOKEN"]
+_location = os.environ["URL_LOCATION"]
+_certificate = os.environ["CERTIFICATE"]
+_listen = "127.0.0.1"
+
 btc_usd = 0
 xem_usd = 0
 xpx_usd = 0
@@ -110,10 +117,11 @@ def main():
     while i < 2:
         try:
             # Create the EventHandler and pass it your bot's token.
-            updater = Updater(os.environ["BOT_TOKEN"], workers = 1)
+            updater = Updater(_token, workers = 1)
 
-            updater.start_webhook(listen="0.0.0.0", port=PORT, url_path=os.environ["BOT_TOKEN"])
-            updater.bot.set_webhook(os.environ["WEB_HOOK"] + os.environ["BOT_TOKEN"])
+			logger.info("Starting webhook '%s' %d '%s'" % (_listen, _port, _location))
+            updater.start_webhook(listen=_listen, port=_port, url_path=_location)
+            updater.bot.set_webhook(url=_webhook, certificate=open(_certificate, 'rb'))
             break
         except Exception as e:
             logger.warn("Exception: %s" % e)
@@ -140,13 +148,10 @@ def main():
     # log all errors
     dp.add_error_handler(error)
 
-    # Start the Bot
-    updater.start_polling()
-    
     # Run the bot until you press Ctrl-C or the process receives SIGINT,
     # SIGTERM or SIGABRT. This should be used most of the time, since
     # start_polling() is non-blocking and will stop the bot gracefully.
-    logger.info("Polling")
+    logger.info("Running")
     updater.idle()
 
     logger.info("Stoping updater") 
